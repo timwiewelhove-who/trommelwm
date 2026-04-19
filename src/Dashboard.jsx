@@ -95,9 +95,9 @@ function Tabelle({ schedule, results, players, upTo }) {
       <thead><tr>
         <th className="t-rank">#</th>
         <th>Trommler</th>
-        <th style={{ textAlign: 'right', width: 26 }}>T</th>
-        <th style={{ textAlign: 'right', width: 30 }}>TD</th>
-        <th style={{ textAlign: 'right', width: 30 }}>Pkt</th>
+        <th style={{ textAlign: 'right', width: 28 }}>T</th>
+        <th style={{ textAlign: 'right', width: 36 }}>TD</th>
+        <th style={{ textAlign: 'right', width: 38 }}>Pkt</th>
       </tr></thead>
       <tbody>
         {rows.map((r, idx) => {
