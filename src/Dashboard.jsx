@@ -80,6 +80,16 @@ function MonitorGrid({ page, players, results, onConfirm, onCorrect }) {
 
 function Tabelle({ schedule, results, players, upTo }) {
   const rows = calcTableUpTo(schedule, results, upTo)
+
+  // Herbstmeister = Tabellenführer nach der Hinrunde (erste Hälfte der Spieltage)
+  const hinrundeEnde = Math.ceil(schedule.length / 2) - 1
+  const herbstRows = calcTableUpTo(schedule, results, hinrundeEnde)
+  const herbstmeisterIdx = herbstRows[0]?.sp > 0 ? herbstRows[0].i : -1
+  // Nur zeigen wenn Hinrunde abgeschlossen und wir in der Rückrunde sind
+  const hinrundeDone = schedule.slice(0, hinrundeEnde + 1).every(st =>
+    st.every(m => results[gameId(m.home, m.away)])
+  )
+
   return (
     <table className="tabelle-table">
       <thead><tr>
@@ -92,12 +102,14 @@ function Tabelle({ schedule, results, players, upTo }) {
       <tbody>
         {rows.map((r, idx) => {
           const td = r.tore - r.gegen
+          const isHerbst = hinrundeDone && r.i === herbstmeisterIdx
           return (
             <tr key={r.i}>
               <td className="t-rank">{idx + 1}</td>
               <td className="t-name">
                 {idx === 0 && r.sp > 0 && <span className="leader-dot" />}
                 {players[r.i]}
+                {isHerbst && <span className="herbst-badge">🍂</span>}
               </td>
               <td className="t-num">{r.tore}</td>
               <td className={`t-num ${td > 0 ? 'td-pos' : td < 0 ? 'td-neg' : ''}`}>
@@ -268,7 +280,7 @@ export default function Dashboard() {
             info={`${schedule[spieltag]?.length} Paarungen${pInfo} · Spieltag ${spieltag + 1} / ${schedule.length}`}
           />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr' }}>
             <div style={{ padding: '20px 40px', borderRight: '0.5px solid var(--gruen40)' }}>
               <div className="section-label">Aktuelle Paarungen</div>
               <MonitorGrid
