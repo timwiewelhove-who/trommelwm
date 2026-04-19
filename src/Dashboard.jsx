@@ -14,11 +14,22 @@ function splitName(name) {
 
 function MonitorGrid({ page, players, results, onConfirm, onCorrect }) {
   const [scores, setScores] = useState({})
-  const cols = Math.min(page.length, 2)
+  const cols = Math.min(page.filter(m => m !== null).length || 1, 2)
 
   return (
-    <div className="maschinen-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className="maschinen-grid" style={{ gridTemplateColumns: `repeat(${page.length}, 1fr)` }}>
       {page.map((m, pi) => {
+        // Leere Box (Pause)
+        if (m === null) return (
+          <div key={`empty-${pi}`} className="maschine" style={{ opacity: 0.25, border: '0.5px dashed var(--gruen40)', background: 'none' }}>
+            <div className="maschine-head">
+              <span className="maschine-name">Maschine {pi + 1}</span>
+            </div>
+            <div className="maschine-body" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+              <span style={{ color: 'var(--weiss30)', fontSize: 14 }}>Pause</span>
+            </div>
+          </div>
+        )
         const r = results[gameId(m.home, m.away)], done = !!r
         const key = `${m.home}_${m.away}`
         const home = splitName(players[m.home])
@@ -226,10 +237,18 @@ export default function Dashboard() {
 
   function getPages(stIdx) {
     if (!schedule[stIdx]) return []
+    const matches = schedule[stIdx]
     const pages = []
-    for (let i = 0; i < schedule[stIdx].length; i += numM)
-      pages.push(schedule[stIdx].slice(i, i + numM))
+    for (let i = 0; i < matches.length; i += numM)
+      pages.push(matches.slice(i, i + numM))
     return pages
+  }
+
+  // Pad current page to always show numM boxes
+  function getPaddedPage(page) {
+    const padded = [...page]
+    while (padded.length < numM) padded.push(null)
+    return padded
   }
 
   function getDoneSet() {
@@ -247,7 +266,7 @@ export default function Dashboard() {
   const doneSet = getDoneSet()
   const pages = getPages(spieltag)
   const cp = Math.min(page, pages.length - 1)
-  const currentPage = pages[cp] || []
+  const currentPage = getPaddedPage(pages[cp] || [])
   const pInfo = pages.length > 1 ? ` · Seite ${cp + 1} / ${pages.length}` : ''
 
   if (loading) return <div className="empty">Laden…</div>
