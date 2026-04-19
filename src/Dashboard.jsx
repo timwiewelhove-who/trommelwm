@@ -14,7 +14,7 @@ function splitName(name) {
 
 function MonitorGrid({ page, players, results, onConfirm, onCorrect }) {
   const [scores, setScores] = useState({})
-  const cols = Math.min(page.length, 3)
+  const cols = Math.min(page.length, 2)
 
   return (
     <div className="maschinen-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
@@ -268,8 +268,8 @@ export default function Dashboard() {
             info={`${schedule[spieltag]?.length} Paarungen${pInfo} · Spieltag ${spieltag + 1} / ${schedule.length}`}
           />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px' }}>
-            <div style={{ padding: '18px 24px', borderRight: '0.5px solid var(--gruen40)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px' }}>
+            <div style={{ padding: '20px 40px', borderRight: '0.5px solid var(--gruen40)' }}>
               <div className="section-label">Aktuelle Paarungen</div>
               <MonitorGrid
                 page={currentPage}

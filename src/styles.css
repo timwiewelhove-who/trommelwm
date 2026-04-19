@@ -21,7 +21,7 @@
 
 body {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   background: var(--gruen);
   color: var(--weiss);
 }
@@ -31,35 +31,36 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
+  padding: 20px 40px;
   border-bottom: 0.5px solid var(--gruen40);
 }
 .logo {
   font-family: 'Bayon', sans-serif;
-  font-size: 22px;
+  font-size: 32px;
   color: var(--gold);
   letter-spacing: .05em;
+  line-height: 1;
 }
 .event-name {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--weiss60);
-  margin-left: 12px;
+  margin-top: 2px;
 }
-.header-left { display: flex; align-items: center; gap: 12px; }
+.header-left { display: flex; align-items: center; gap: 14px; }
 .live-badge {
   background: var(--gold);
   color: var(--weiss);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 3px 10px;
+  padding: 5px 14px;
   border-radius: 3px;
   letter-spacing: .08em;
 }
 .clock {
   font-family: 'Bayon', sans-serif;
-  font-size: 18px;
+  font-size: 26px;
   color: var(--weiss);
-  margin-left: 14px;
+  margin-left: 16px;
 }
 
 /* ── Spieltag Nav ── */
@@ -67,15 +68,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 24px;
+  padding: 12px 40px;
   border-bottom: 0.5px solid var(--gruen40);
-  gap: 12px;
+  gap: 16px;
 }
 .st-side {
-  font-size: 12px;
+  font-size: 15px;
   color: var(--weiss30);
   cursor: pointer;
-  min-width: 110px;
+  min-width: 140px;
   white-space: nowrap;
   user-select: none;
 }
@@ -92,10 +93,10 @@ body {
 }
 .st-title {
   font-family: 'Bayon', sans-serif;
-  font-size: 20px;
+  font-size: 28px;
   color: var(--weiss);
 }
-.st-arrow { font-size: 12px; color: var(--weiss60); }
+.st-arrow { font-size: 14px; color: var(--weiss60); }
 .st-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -126,17 +127,17 @@ body {
 
 /* ── Maschinen Boxen ── */
 .section-label {
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--weiss60);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   font-weight: 600;
 }
-.maschinen-grid { display: grid; gap: 10px; }
+.maschinen-grid { display: grid; gap: 14px; }
 .maschine {
   border: 0.5px solid var(--gruen40);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -150,7 +151,7 @@ body {
   border-color: rgba(176,137,45,.35);
 }
 .maschine-head {
-  padding: 8px 12px;
+  padding: 10px 16px;
   background: rgba(0,0,0,.2);
   border-bottom: 0.5px solid var(--gruen40);
   display: flex;
@@ -158,51 +159,53 @@ body {
   align-items: center;
   flex-shrink: 0;
 }
-.maschine-name { font-size: 12px; font-weight: 600; color: var(--weiss60); }
+.maschine-name { font-size: 15px; font-weight: 600; color: var(--weiss60); }
 .status-icon {
-  width: 18px; height: 18px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.status-icon.laeuft { border: 1.5px solid rgba(74,222,128,.6); }
-.status-icon.fertig { border: 1.5px solid var(--gold); background: rgba(176,137,45,.15); }
-.status-icon svg { width: 9px; height: 9px; }
-.maschine-body { padding: 12px; display: flex; flex-direction: column; flex: 1; }
+.status-icon.laeuft { border: 2px solid rgba(74,222,128,.6); }
+.status-icon.fertig { border: 2px solid var(--gold); background: rgba(176,137,45,.15); }
+.status-icon svg { width: 11px; height: 11px; }
+.maschine-body { padding: 16px; display: flex; flex-direction: column; flex: 1; }
 .paarung-block {
   flex-shrink: 0;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 0.5px solid var(--gruen40);
-  height: 76px;
+  height: 90px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  text-align: center;
 }
-.spieler { font-size: 13px; font-weight: 600; color: var(--weiss); line-height: 1.25; }
+.spieler { font-size: 17px; font-weight: 600; color: var(--weiss); line-height: 1.25; }
 .spieler .vorname { display: block; }
 .spieler .nachname { display: block; }
-.vs { font-size: 10px; color: var(--weiss30); padding: 2px 0; }
+.vs { font-size: 12px; color: var(--weiss30); padding: 2px 0; }
 .score-block {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
-  min-height: 80px;
+  min-height: 100px;
 }
 .score-top { display: flex; justify-content: center; }
-.score-done { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.score-done { display: flex; align-items: center; gap: 12px; padding: 6px 0; }
 .score-zahl {
   font-family: 'Bayon', sans-serif;
-  font-size: 36px;
+  font-size: 48px;
   color: var(--gold);
   line-height: 1;
-  min-width: 32px;
+  min-width: 40px;
   text-align: center;
 }
 .score-colon {
   font-family: 'Bayon', sans-serif;
-  font-size: 28px;
+  font-size: 36px;
   color: var(--gold);
   line-height: 1;
 }
@@ -210,18 +213,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   padding: 4px 0;
   width: 100%;
 }
 .score-field {
-  width: 50px;
+  width: 64px;
   text-align: center;
   font-family: 'Bayon', sans-serif;
-  font-size: 28px;
-  padding: 5px 4px;
+  font-size: 38px;
+  padding: 7px 4px;
   border: 0.5px solid var(--gruen40);
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255,255,255,.06);
   color: var(--weiss);
   line-height: 1;
@@ -231,32 +234,32 @@ body {
 .score-field::-webkit-inner-spin-button { display: none; }
 .score-trenner {
   font-family: 'Bayon', sans-serif;
-  font-size: 22px;
+  font-size: 30px;
   color: var(--weiss30);
   line-height: 1;
 }
 .btn-ok {
   width: 100%;
-  padding: 7px;
+  padding: 10px;
   border: none;
   background: var(--btn-gruen);
   color: var(--weiss);
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
 .btn-ok:hover { background: var(--btn-gruen-hover); }
 .btn-fix {
   width: 100%;
-  padding: 7px;
+  padding: 10px;
   border: none;
   background: var(--gold);
   color: var(--schwarz);
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -452,3 +455,22 @@ body {
 @media (min-width: 641px) and (max-width: 1024px) {
   .maschinen-grid { grid-template-columns: repeat(2,1fr) !important; }
 }
+
+/* ── TV-Overrides: größere Sidebar & Footer ── */
+.tabelle-table { font-size: 15px; }
+.tabelle-table th { font-size: 12px; padding: 4px 6px; }
+.tabelle-table td { padding: 7px 6px; }
+.top3-card { padding: 12px 8px; }
+.top3-medal { font-size: 16px; }
+.top3-vorname { font-size: 13px; }
+.top3-nachname { font-size: 13px; }
+.top3-tore { font-size: 28px; }
+.top3-avg { font-size: 11px; }
+.tor-row { font-size: 15px; padding: 7px 0; }
+.page-nav { margin-top: 16px; }
+.page-btn { font-size: 15px; padding: 8px 18px; }
+.page-info { font-size: 14px; }
+.app-footer { padding: 12px 40px; }
+.footer-txt { font-size: 14px; }
+.st-info { font-size: 14px; }
+.st-item { font-size: 15px; padding: 10px 18px; }
