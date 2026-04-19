@@ -244,8 +244,11 @@ export default function Dashboard() {
     <div style={{ display: 'grid', gridTemplateRows: 'auto auto 1fr auto', minHeight: '100vh' }}>
       <div className="app-header">
         <div className="header-left">
-          <div className="logo">TRMMLR</div>
-          <div className="event-name">X. Trommelschießen-WM · 06.06.2026</div>
+          <img src="/trommel.svg" alt="Trommel" style={{ height: 40, width: 'auto', marginRight: 12, flexShrink: 0 }} />
+          <div>
+            <div className="logo">TRMMLR</div>
+            <div className="event-name">X. Trommelschießen-WM · 06.06.2026</div>
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {tournament?.started && <span className="live-badge">LIVE</span>}

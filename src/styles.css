@@ -45,7 +45,7 @@ body {
   color: var(--weiss60);
   margin-left: 12px;
 }
-.header-left { display: flex; align-items: baseline; }
+.header-left { display: flex; align-items: center; gap: 12px; }
 .live-badge {
   background: var(--gold);
   color: var(--weiss);
