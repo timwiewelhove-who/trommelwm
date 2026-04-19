@@ -37,12 +37,12 @@ function MonitorGrid({ page, players, results, onConfirm, onCorrect }) {
             <div className="maschine-body">
               <div className="paarung-block">
                 <div className="spieler">
-                  <span className="vorname">{home.vorname}</span>
+                  <span className="vorname">{home.vorname} </span>
                   <span className="nachname">{home.nachname}</span>
                 </div>
                 <div className="vs">vs.</div>
                 <div className="spieler">
-                  <span className="vorname">{away.vorname}</span>
+                  <span className="vorname">{away.vorname} </span>
                   <span className="nachname">{away.nachname}</span>
                 </div>
               </div>
