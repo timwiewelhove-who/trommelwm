@@ -126,7 +126,7 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag }) {
           >
             {schedule.map((_, i) => (
               <option key={i} value={i}>
-                Spieltag {i + 1}{doneSet.has(i) ? ' ✓' : ''}
+                Spieltag {i + 1}{doneSet.has(i) ? ' ·' : ''}
               </option>
             ))}
           </select>

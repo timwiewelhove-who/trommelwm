@@ -609,62 +609,72 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   gap: 12px;
 }
 .kicker-st-select {
-  background: rgba(255,255,255,.06);
-  border: 0.5px solid var(--gruen40);
-  border-radius: 8px;
+  background: transparent;
+  border: none;
   color: var(--weiss);
   font-family: 'Bayon', sans-serif;
-  font-size: 22px;
-  padding: 6px 36px 6px 14px;
+  font-size: 26px;
+  padding: 4px 32px 4px 0;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.35)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 6px center;
+}
+.kicker-st-select:hover, .kicker-st-select:focus {
+  outline: none;
+}
+.kicker-st-select option {
+  background: var(--gruen-tief);
+  font-size: 16px;
 }
 .kicker-st-info {
   font-size: 13px;
   color: var(--weiss30);
   white-space: nowrap;
 }
+
+/* Match-Liste */
 .kicker-matches {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
 }
 
-/* Match-Zeile: 3 Stati */
+/* Match-Zeile: feste Höhe, alle gleich */
 .kicker-match {
   display: grid;
-  grid-template-columns: 28px 1fr auto 1fr;
+  grid-template-columns: 30px 1fr auto 1fr;
   align-items: center;
-  padding: 11px 14px;
+  height: 52px;
+  padding: 0 16px;
   border: 0.5px solid var(--gruen40);
   border-radius: 8px;
-  gap: 12px;
-  transition: background .15s, border-color .15s, opacity .15s;
+  gap: 14px;
+  transition: background .15s, border-color .15s, opacity .2s;
+  overflow: hidden;
 }
 
 /* STATUS 1: ausstehend */
 .kicker-match.pending {
-  opacity: 0.32;
+  opacity: 0.3;
 }
 
 /* STATUS 2: läuft gerade */
 .kicker-match.active {
   background: rgba(74,222,128,.05);
-  border-color: rgba(74,222,128,.28);
+  border-color: rgba(74,222,128,.3);
 }
 
 /* STATUS 3: beendet */
 .kicker-match.done {
   background: rgba(176,137,45,.07);
-  border-color: rgba(176,137,45,.28);
+  border-color: rgba(176,137,45,.3);
 }
 
 .kicker-m-label {
@@ -672,27 +682,30 @@ body {
   font-weight: 600;
   letter-spacing: .05em;
   color: var(--weiss30);
+  flex-shrink: 0;
 }
 .kicker-match.active .kicker-m-label { color: rgba(74,222,128,.8); }
 .kicker-match.done .kicker-m-label { color: var(--gold); }
 
 .kicker-home {
   text-align: right;
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: var(--weiss);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 .kicker-away {
   text-align: left;
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: var(--weiss);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 .kicker-score {
   display: flex;
@@ -700,26 +713,26 @@ body {
   justify-content: center;
   gap: 4px;
   flex-shrink: 0;
-  min-width: 76px;
+  min-width: 80px;
 }
 .kicker-score-num {
   font-family: 'Bayon', sans-serif;
-  font-size: 30px;
+  font-size: 32px;
   color: var(--gold);
-  min-width: 22px;
+  min-width: 24px;
   text-align: center;
   line-height: 1;
 }
 .kicker-score-sep {
   font-family: 'Bayon', sans-serif;
-  font-size: 24px;
+  font-size: 26px;
   color: var(--weiss30);
   line-height: 1;
 }
 .kicker-score-pending {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--weiss30);
-  letter-spacing: .1em;
+  letter-spacing: .15em;
 }
 
 /* Runden-Trenner */
@@ -727,8 +740,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 2px;
-  opacity: 0.5;
+  padding: 4px 2px;
+  opacity: 0.45;
 }
 .round-divider-line {
   flex: 1;
@@ -743,82 +756,48 @@ body {
   white-space: nowrap;
 }
 
-/* Mobile Kicker-Style (nutzt gleiche SpieltagView) */
-@media (max-width: 768px) {
-  .kicker-st-bar { padding: 14px 16px 8px; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .kicker-st-select { font-size: 18px; width: 100%; }
-  .kicker-matches { padding: 0 16px; }
-  .kicker-home, .kicker-away { font-size: 14px; }
-  .kicker-score-num { font-size: 24px; }
-  .kicker-m-label { font-size: 11px; }
-}
-
-/* ── Fixes: letzte Änderungen ── */
-
-/* Kicker-Match: feste Höhe damit alle gleich */
-.kicker-match {
-  min-height: 52px;
-}
-
-/* Namen größer */
-.kicker-home, .kicker-away {
-  font-size: 19px !important;
-}
-
-/* Tabellen-Namen größer */
-.tabelle-table td { font-size: 15px; }
-.tabelle-table th { font-size: 11px; }
-.t-name { font-size: 15px !important; }
-
-/* Spieltag-Select: dezenter, kein sichtbarer Box-Rand */
-.kicker-st-select {
-  border-color: transparent !important;
-  background-color: transparent !important;
-  font-size: 26px !important;
-  padding-left: 0 !important;
-}
-.kicker-st-select:hover, .kicker-st-select:focus {
-  border-color: var(--gruen40) !important;
-  background-color: rgba(255,255,255,.04) !important;
-  outline: none;
-}
+/* Tabelle größer */
+.tabelle-table { font-size: 15px !important; table-layout: auto !important; }
+.tabelle-table th { font-size: 11px !important; }
+.t-name { font-size: 15px !important; font-weight: 600 !important; }
 
 /* Torschützen-Leader */
 .tor-leader {
   background: rgba(176,137,45,.12);
   border: 0.5px solid rgba(176,137,45,.4);
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 16px;
   text-align: center;
+  margin-bottom: 4px;
 }
 .tor-leader-icons {
-  font-size: 20px;
+  font-size: 22px;
+  letter-spacing: 8px;
   margin-bottom: 6px;
-  letter-spacing: 6px;
 }
 .tor-leader-tore {
   font-family: 'Bayon', sans-serif;
-  font-size: 52px;
+  font-size: 56px;
   color: var(--gold);
   line-height: 1;
 }
 .tor-leader-avg {
   font-size: 13px;
   color: var(--weiss30);
-  margin: 2px 0 6px;
+  margin: 3px 0 6px;
 }
 .tor-leader-name {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: var(--weiss);
 }
 
-/* Paarungen: mehr vertikaler Abstand */
-.kicker-matches {
-  gap: 8px !important;
-}
-
-/* Etwas mehr Abstand Uhrzeit/LIVE */
-.live-badge {
-  margin-left: 8px;
+/* Mobile Kicker-Style */
+@media (max-width: 768px) {
+  .kicker-st-bar { padding: 14px 16px 8px; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .kicker-st-select { font-size: 20px; }
+  .kicker-matches { padding: 0 16px; gap: 8px; }
+  .kicker-home, .kicker-away { font-size: 15px; }
+  .kicker-score-num { font-size: 26px; }
+  .kicker-match { height: 48px; }
 }
