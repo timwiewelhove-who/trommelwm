@@ -17,7 +17,7 @@ function MonitorGrid({ page, players, results, onConfirm, onCorrect }) {
   const cols = Math.min(page.filter(m => m !== null).length || 1, 2)
 
   return (
-    <div className="maschinen-grid" style={{ gridTemplateColumns: `repeat(${page.length}, 1fr)` }}>
+    <div className="maschinen-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
       {page.map((m, pi) => {
         // Leere Box (Pause)
         if (m === null) return (
