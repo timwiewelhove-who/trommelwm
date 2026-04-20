@@ -113,41 +113,39 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag }) {
           <span className="kicker-st-info">{st.length} Paarungen · Spieltag {spieltag + 1} / {schedule.length}</span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="page-btn" disabled={spieltag === 0} onClick={() => setSpieltag(s => s - 1)}>← zurück</button>
-          <button className="page-btn primary" disabled={spieltag >= schedule.length - 1} onClick={() => setSpieltag(s => s + 1)}>weiter →</button>
+          <button className="page-btn" disabled={spieltag === 0} onClick={() => setSpieltag(s => s - 1)}>← Vorheriger Spieltag</button>
+          <button className="page-btn primary" disabled={spieltag >= schedule.length - 1} onClick={() => setSpieltag(s => s + 1)}>Nächster Spieltag →</button>
         </div>
       </div>
 
       {/* Match-Liste mit Runden-Trenner */}
       <div className="kicker-matches">
-        {rounds.map((round, ri) => (
-          <div key={ri}>
-            {ri > 0 && (
-              <div className="round-divider">
-                <div className="round-divider-line" />
-                <span className="round-divider-label">Nächste Runde</span>
-                <div className="round-divider-line" />
-              </div>
-            )}
-            {round.map((m, idx) => {
-              const status = getMatchStatus(m, st, results)
-              const r = results[gameId(m.home, m.away)]
-              return (
-                <div key={idx} className={`kicker-match ${status}`}>
-                  <span className="kicker-m-label">M{m.machine + 1}</span>
-                  <div className="kicker-home">{players[m.home]}</div>
-                  <div className="kicker-score">
-                    {status === 'done'
-                      ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
-                      : <span className="kicker-score-pending">– : –</span>
-                    }
-                  </div>
-                  <div className="kicker-away">{players[m.away]}</div>
+        {rounds.flatMap((round, ri) => [
+          ...(ri > 0 ? [(
+            <div key={`divider-${ri}`} className="round-divider">
+              <div className="round-divider-line" />
+              <span className="round-divider-label">Nächste Runde</span>
+              <div className="round-divider-line" />
+            </div>
+          )] : []),
+          ...round.map((m, idx) => {
+            const status = getMatchStatus(m, st, results)
+            const r = results[gameId(m.home, m.away)]
+            return (
+              <div key={`${ri}-${idx}`} className={`kicker-match ${status}`}>
+                <span className="kicker-m-label">M{m.machine + 1}</span>
+                <div className="kicker-home">{players[m.home]}</div>
+                <div className="kicker-score">
+                  {status === 'done'
+                    ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
+                    : <span className="kicker-score-pending">– : –</span>
+                  }
                 </div>
-              )
-            })}
-          </div>
-        ))}
+                <div className="kicker-away">{players[m.away]}</div>
+              </div>
+            )
+          })
+        ])}
       </div>
     </>
   )
