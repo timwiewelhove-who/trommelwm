@@ -464,3 +464,142 @@ body {
   .paarung-block { flex-direction: column; gap: 2px; }
   .vs { padding: 2px 0; }
 }
+
+/* ── Responsive Show/Hide ── */
+.mobile-only { display: none; }
+.desktop-only { display: grid; }
+@media (max-width: 768px) {
+  .mobile-only { display: block; }
+  .desktop-only { display: none !important; }
+}
+
+/* ── Mobile View ── */
+.mobile-view { background: var(--gruen); min-height: 100vh; }
+
+.mobile-tabs {
+  display: flex;
+  border-bottom: 0.5px solid var(--gruen40);
+  background: rgba(0,0,0,.15);
+}
+.mobile-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: none;
+  color: var(--weiss60);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+}
+.mobile-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  font-weight: 600;
+}
+
+.mobile-content { padding: 0 0 40px; }
+
+.mobile-st-bar { padding: 14px 16px 10px; }
+.mobile-st-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid var(--gruen40);
+  border-radius: 8px;
+  color: var(--weiss);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.mobile-matches { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+.mobile-match {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.04);
+  border: 0.5px solid var(--gruen40);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.mobile-match.done {
+  background: rgba(176,137,45,.06);
+  border-color: rgba(176,137,45,.25);
+}
+.mobile-machine { font-size: 11px; color: var(--weiss30); min-width: 22px; flex-shrink: 0; }
+.mobile-name { flex: 1; color: var(--weiss); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.mobile-name.right { text-align: right; }
+.mobile-score {
+  font-family: 'Bayon', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+  min-width: 52px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.mobile-match:not(.done) .mobile-score { color: var(--weiss30); font-size: 16px; }
+
+/* Mobile Tabelle */
+.mobile-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 0 16px;
+  width: calc(100% - 32px);
+  font-weight: 500;
+}
+.mobile-table th {
+  color: var(--weiss30);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 10px 6px 6px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.mobile-table td { padding: 8px 6px; border-bottom: 0.5px solid rgba(255,255,255,.05); color: var(--weiss60); }
+.mobile-table tr:last-child td { border-bottom: none; }
+.mobile-t-name { color: var(--weiss) !important; font-weight: 600; }
+.mobile-table th:nth-child(3), .mobile-table td:nth-child(3),
+.mobile-table th:nth-child(4), .mobile-table td:nth-child(4),
+.mobile-table th:nth-child(5), .mobile-table td:nth-child(5) { text-align: right; }
+
+/* Mobile Torschützen */
+.mobile-tor-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid rgba(255,255,255,.05);
+  font-size: 14px;
+}
+.mobile-tor-rank { color: var(--weiss30); width: 20px; flex-shrink: 0; }
+.mobile-tor-name { flex: 1; color: var(--weiss); font-weight: 500; }
+.mobile-tor-tore { font-family: 'Bayon', sans-serif; font-size: 22px; color: var(--gold); min-width: 28px; text-align: right; }
+.mobile-tor-avg { font-size: 12px; color: var(--weiss30); min-width: 52px; text-align: right; }
+
+/* Admin btn-apply */
+.btn-apply {
+  width: 100%;
+  padding: 9px;
+  border: 0.5px solid var(--gruen40);
+  background: none;
+  color: var(--weiss60);
+  border-radius: 8px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.btn-apply:hover { border-color: var(--weiss60); color: var(--weiss); }
