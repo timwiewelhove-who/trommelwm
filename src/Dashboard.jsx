@@ -148,8 +148,7 @@ function Torschuetzen({ schedule, results, players, upTo }) {
           return (
             <div key={r.i} className={`top3-card ${medalClass[i]}`}>
               <div className="top3-medal">{medals[i]}</div>
-              <div className="top3-vorname">{vorname}</div>
-              <div className="top3-nachname">{nachname}</div>
+              <div className="top3-name">{r.name}</div>
               <div className="top3-tore">{r.tore}</div>
               <div className="top3-avg">Ø {r.avg.toFixed(2)}</div>
             </div>
