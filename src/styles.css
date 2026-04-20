@@ -182,9 +182,7 @@ body {
   justify-content: center;
   text-align: center;
 }
-.spieler { font-size: 19px; font-weight: 700; color: var(--weiss); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.spieler .vorname { display: inline; }
-.spieler .nachname { display: inline; }
+.spieler { font-size: 20px; font-weight: 700; color: var(--weiss); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 
 .vs { font-size: 12px; color: var(--weiss30); padding: 2px 0; }
 .score-block {
@@ -454,8 +452,6 @@ body {
 
 @media (max-width: 768px) {
   .spieler { font-size: 15px; white-space: normal; overflow: visible; text-overflow: clip; }
-  .spieler .vorname { display: block; }
-  .spieler .nachname { display: block; }
   .paarung-block { height: auto; min-height: 80px; }
   .maschinen-grid { grid-template-columns: 1fr !important; }
 }
