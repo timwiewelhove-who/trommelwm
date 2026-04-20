@@ -603,3 +603,152 @@ body {
   margin-bottom: 8px;
 }
 .btn-apply:hover { border-color: var(--weiss60); color: var(--weiss); }
+
+/* ── Kicker-Layout ── */
+.kicker-st-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.kicker-st-select {
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid var(--gruen40);
+  border-radius: 8px;
+  color: var(--weiss);
+  font-family: 'Bayon', sans-serif;
+  font-size: 22px;
+  padding: 6px 36px 6px 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.kicker-st-info {
+  font-size: 13px;
+  color: var(--weiss30);
+  white-space: nowrap;
+}
+.kicker-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Match-Zeile: 3 Stati */
+.kicker-match {
+  display: grid;
+  grid-template-columns: 28px 1fr auto 1fr;
+  align-items: center;
+  padding: 11px 14px;
+  border: 0.5px solid var(--gruen40);
+  border-radius: 8px;
+  gap: 12px;
+  transition: background .15s, border-color .15s, opacity .15s;
+}
+
+/* STATUS 1: ausstehend */
+.kicker-match.pending {
+  opacity: 0.32;
+}
+
+/* STATUS 2: läuft gerade */
+.kicker-match.active {
+  background: rgba(74,222,128,.05);
+  border-color: rgba(74,222,128,.28);
+}
+
+/* STATUS 3: beendet */
+.kicker-match.done {
+  background: rgba(176,137,45,.07);
+  border-color: rgba(176,137,45,.28);
+}
+
+.kicker-m-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--weiss30);
+}
+.kicker-match.active .kicker-m-label { color: rgba(74,222,128,.8); }
+.kicker-match.done .kicker-m-label { color: var(--gold); }
+
+.kicker-home {
+  text-align: right;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--weiss);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kicker-away {
+  text-align: left;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--weiss);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kicker-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 76px;
+}
+.kicker-score-num {
+  font-family: 'Bayon', sans-serif;
+  font-size: 30px;
+  color: var(--gold);
+  min-width: 22px;
+  text-align: center;
+  line-height: 1;
+}
+.kicker-score-sep {
+  font-family: 'Bayon', sans-serif;
+  font-size: 24px;
+  color: var(--weiss30);
+  line-height: 1;
+}
+.kicker-score-pending {
+  font-size: 15px;
+  color: var(--weiss30);
+  letter-spacing: .1em;
+}
+
+/* Runden-Trenner */
+.round-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 2px;
+  opacity: 0.5;
+}
+.round-divider-line {
+  flex: 1;
+  height: 0.5px;
+  background: var(--weiss30);
+}
+.round-divider-label {
+  font-size: 10px;
+  color: var(--weiss30);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Mobile Kicker-Style (nutzt gleiche SpieltagView) */
+@media (max-width: 768px) {
+  .kicker-st-bar { padding: 14px 16px 8px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .kicker-st-select { font-size: 18px; width: 100%; }
+  .kicker-matches { padding: 0 16px; }
+  .kicker-home, .kicker-away { font-size: 14px; }
+  .kicker-score-num { font-size: 24px; }
+  .kicker-m-label { font-size: 11px; }
+}
