@@ -306,7 +306,7 @@ export default function Dashboard() {
   if (loading) return <div className="empty">Laden…</div>
 
   // Kein aktives Turnier
-  if (!tournament?.liveActive && !tournament?.started) {
+  if (!tournament?.liveActive) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--gruen)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
         <img src="/trommel.svg" alt="" style={{ height: 80, opacity: 0.4 }} />
