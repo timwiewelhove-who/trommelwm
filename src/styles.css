@@ -643,7 +643,7 @@ body {
 .kicker-matches {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* Match-Zeile: feste Höhe, alle gleich */
@@ -651,13 +651,14 @@ body {
   display: grid;
   grid-template-columns: 30px 1fr auto 1fr;
   align-items: center;
-  height: 52px;
-  padding: 0 16px;
+  height: 56px;
+  padding: 0 20px;
   border: 0.5px solid var(--gruen40);
   border-radius: 8px;
   gap: 14px;
   transition: background .15s, border-color .15s, opacity .2s;
   overflow: hidden;
+  max-width: 760px;
 }
 
 /* STATUS 1: ausstehend */
@@ -689,7 +690,7 @@ body {
 
 .kicker-home {
   text-align: right;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--weiss);
   overflow: hidden;
@@ -699,7 +700,7 @@ body {
 }
 .kicker-away {
   text-align: left;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--weiss);
   overflow: hidden;
@@ -717,9 +718,9 @@ body {
 }
 .kicker-score-num {
   font-family: 'Bayon', sans-serif;
-  font-size: 32px;
+  font-size: 38px;
   color: var(--gold);
-  min-width: 24px;
+  min-width: 28px;
   text-align: center;
   line-height: 1;
 }
@@ -766,14 +767,15 @@ body {
   background: rgba(176,137,45,.12);
   border: 0.5px solid rgba(176,137,45,.4);
   border-radius: 10px;
-  padding: 16px;
+  padding: 20px 16px;
   text-align: center;
   margin-bottom: 4px;
+  max-width: 280px;
 }
 .tor-leader-icons {
-  font-size: 22px;
-  letter-spacing: 8px;
-  margin-bottom: 6px;
+  font-size: 26px;
+  letter-spacing: 10px;
+  margin-bottom: 8px;
 }
 .tor-leader-tore {
   font-family: 'Bayon', sans-serif;

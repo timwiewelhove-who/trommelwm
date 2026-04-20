@@ -72,32 +72,12 @@ function Torschuetzen({ schedule, results, players, upTo }) {
   if (rows.length === 0) return null
   const leader = rows[0]
   return (
-    <>
-      {/* Führender – groß hervorgehoben */}
-      {leader && (
-        <div className="tor-leader">
-          <div className="tor-leader-icons">
-            <span title="Waschmaschine">🫧</span>
-            <span title="Ball">🎯</span>
-            <span title="Kanone">💥</span>
-          </div>
-          <div className="tor-leader-tore">{leader.tore}</div>
-          <div className="tor-leader-avg">Ø {leader.avg.toFixed(2)}</div>
-          <div className="tor-leader-name">{leader.name}</div>
-        </div>
-      )}
-      {/* Rest als Liste */}
-      <div style={{ marginTop: 10 }}>
-        {rows.slice(1).map((r, i) => (
-          <div key={r.i} className="tor-row">
-            <span className="tor-rank">{i + 2}</span>
-            <span className="tor-name">{r.name}</span>
-            <span className="tor-tore">{r.tore}</span>
-            <div className="tor-bar"><div className="tor-fill" style={{ width: `${Math.round(r.tore / (leader.tore || 1) * 100)}%` }} /></div>
-          </div>
-        ))}
-      </div>
-    </>
+    <div className="tor-leader">
+      <div className="tor-leader-icons">💣 👑</div>
+      <div className="tor-leader-tore">{leader.tore}</div>
+      <div className="tor-leader-avg">Ø {leader.avg.toFixed(2)}</div>
+      <div className="tor-leader-name">{leader.name}</div>
+    </div>
   )
 }
 
@@ -325,19 +305,19 @@ export default function Dashboard() {
         </div>
 
         {/* Main */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr' }}>
           {/* Paarungen */}
-          <div style={{ padding: '20px 36px', borderRight: '0.5px solid var(--gruen40)' }}>
+          <div style={{ padding: '24px 48px', borderRight: '0.5px solid var(--gruen40)' }}>
             <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} />
           </div>
 
           {/* Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '16px 18px', borderBottom: '0.5px solid var(--gruen40)' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '0.5px solid var(--gruen40)' }}>
               <div className="section-label">Tabelle</div>
               <Tabelle schedule={schedule} results={results} players={players} upTo={latestST} />
             </div>
-            <div style={{ padding: '16px 18px', flex: 1 }}>
+            <div style={{ padding: '20px 24px', flex: 1 }}>
               <div className="section-label">Torschützen</div>
               <Torschuetzen schedule={schedule} results={results} players={players} upTo={latestST} />
             </div>
