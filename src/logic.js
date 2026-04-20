@@ -14,29 +14,57 @@ export function buildRoundRobin(N) {
   return rounds
 }
 
-export function assignMachines(rounds, N, M) {
-  const cnt = Array.from({ length: N }, () => Array(M).fill(0))
+function assignRounds(rounds, N, M, playerMachineCnt) {
+  const machineTotalCnt = Array(M).fill(0)
+  for (let m = 0; m < M; m++)
+    for (let p = 0; p < N; p++) machineTotalCnt[m] += Math.round(playerMachineCnt[p][m])
+  for (let m = 0; m < M; m++) machineTotalCnt[m] = Math.round(machineTotalCnt[m] / 2)
+
   return rounds.map(round => {
-    const used = new Set(), assigned = []
-    for (let m = 0; m < M && m < round.length; m++) {
+    const assigned = []
+    const usedMatchIdx = new Set()
+    const slots = Math.min(M, round.length)
+
+    // Maschinen: am wenigsten global genutzt zuerst
+    const machineOrder = [...Array(M).keys()]
+      .sort((a, b) => machineTotalCnt[a] - machineTotalCnt[b])
+
+    for (const m of machineOrder) {
+      if (assigned.length >= slots) break
+
+      // Bestes Match: Spielerpaar das am seltensten auf dieser Maschine war
       let bestIdx = -1, bestScore = Infinity
       round.forEach(({ home, away }, idx) => {
-        if (used.has(idx)) return
-        const s = cnt[home][m] + cnt[away][m]
-        if (s < bestScore) { bestScore = s; bestIdx = idx }
+        if (usedMatchIdx.has(idx)) return
+        const score = playerMachineCnt[home][m] + playerMachineCnt[away][m]
+        if (score < bestScore) { bestScore = score; bestIdx = idx }
       })
+
       if (bestIdx >= 0) {
         const { home, away } = round[bestIdx]
-        used.add(bestIdx); assigned.push({ home, away, machine: m })
-        cnt[home][m]++; cnt[away][m]++
+        usedMatchIdx.add(bestIdx)
+        assigned.push({ home, away, machine: m })
+        machineTotalCnt[m]++
+        playerMachineCnt[home][m]++
+        playerMachineCnt[away][m]++
       }
     }
+
+    // Überhang: auf am wenigsten genutzter Maschine (spielerbezogen + global)
     round.forEach(({ home, away }, idx) => {
-      if (used.has(idx)) return
-      const m = assigned.length % M
+      if (usedMatchIdx.has(idx)) return
+      const m = [...Array(M).keys()].reduce((best, cur) => {
+        const sc = playerMachineCnt[home][cur] + playerMachineCnt[away][cur]
+        const sb = playerMachineCnt[home][best] + playerMachineCnt[away][best]
+        if (sc !== sb) return sc < sb ? cur : best
+        return machineTotalCnt[cur] < machineTotalCnt[best] ? cur : best
+      }, 0)
       assigned.push({ home, away, machine: m })
-      cnt[home][m]++; cnt[away][m]++
+      machineTotalCnt[m]++
+      playerMachineCnt[home][m]++
+      playerMachineCnt[away][m]++
     })
+
     return assigned
   })
 }
@@ -45,7 +73,15 @@ export function buildSchedule(players, numMachines) {
   const N = players.length
   const hin = buildRoundRobin(N)
   const rueck = hin.map(r => r.map(({ home, away }) => ({ home: away, away: home })))
-  return assignMachines([...hin, ...rueck], N, numMachines)
+
+  // Hinrunde mit frischem Zähler
+  const playerMachineCnt = Array.from({ length: N }, () => Array(numMachines).fill(0))
+  const hinAssigned = assignRounds(hin, N, numMachines, playerMachineCnt)
+
+  // Rückrunde mit dem Stand nach Hinrunde → gleicht Unwucht aus
+  const rueckAssigned = assignRounds(rueck, N, numMachines, playerMachineCnt)
+
+  return [...hinAssigned, ...rueckAssigned]
 }
 
 export function gameId(a, b) { return `${a}_${b}` }
