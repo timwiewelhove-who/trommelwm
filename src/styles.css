@@ -752,3 +752,73 @@ body {
   .kicker-score-num { font-size: 24px; }
   .kicker-m-label { font-size: 11px; }
 }
+
+/* ── Fixes: letzte Änderungen ── */
+
+/* Kicker-Match: feste Höhe damit alle gleich */
+.kicker-match {
+  min-height: 52px;
+}
+
+/* Namen größer */
+.kicker-home, .kicker-away {
+  font-size: 19px !important;
+}
+
+/* Tabellen-Namen größer */
+.tabelle-table td { font-size: 15px; }
+.tabelle-table th { font-size: 11px; }
+.t-name { font-size: 15px !important; }
+
+/* Spieltag-Select: dezenter, kein sichtbarer Box-Rand */
+.kicker-st-select {
+  border-color: transparent !important;
+  background-color: transparent !important;
+  font-size: 26px !important;
+  padding-left: 0 !important;
+}
+.kicker-st-select:hover, .kicker-st-select:focus {
+  border-color: var(--gruen40) !important;
+  background-color: rgba(255,255,255,.04) !important;
+  outline: none;
+}
+
+/* Torschützen-Leader */
+.tor-leader {
+  background: rgba(176,137,45,.12);
+  border: 0.5px solid rgba(176,137,45,.4);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.tor-leader-icons {
+  font-size: 20px;
+  margin-bottom: 6px;
+  letter-spacing: 6px;
+}
+.tor-leader-tore {
+  font-family: 'Bayon', sans-serif;
+  font-size: 52px;
+  color: var(--gold);
+  line-height: 1;
+}
+.tor-leader-avg {
+  font-size: 13px;
+  color: var(--weiss30);
+  margin: 2px 0 6px;
+}
+.tor-leader-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--weiss);
+}
+
+/* Paarungen: mehr vertikaler Abstand */
+.kicker-matches {
+  gap: 8px !important;
+}
+
+/* Etwas mehr Abstand Uhrzeit/LIVE */
+.live-badge {
+  margin-left: 8px;
+}

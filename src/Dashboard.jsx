@@ -32,7 +32,11 @@ function Tabelle({ schedule, results, players, upTo }) {
       <thead><tr>
         <th style={{ width: 18 }}>#</th>
         <th>Trommler</th>
-        <th style={{ textAlign: 'right', width: 24 }}>T</th>
+        <th style={{ textAlign: 'right', width: 28 }}>Sp</th>
+        <th style={{ textAlign: 'right', width: 26 }}>S</th>
+        <th style={{ textAlign: 'right', width: 26 }}>U</th>
+        <th style={{ textAlign: 'right', width: 26 }}>N</th>
+        <th style={{ textAlign: 'right', width: 26 }}>T</th>
         <th style={{ textAlign: 'right', width: 32 }}>TD</th>
         <th style={{ textAlign: 'right', width: 32 }}>Pkt</th>
       </tr></thead>
@@ -47,6 +51,10 @@ function Tabelle({ schedule, results, players, upTo }) {
                 {players[r.i]}
                 {hinrundeDone && r.i === herbstIdx && <span className="herbst-badge">🍂</span>}
               </td>
+              <td className="t-num">{r.sp}</td>
+              <td className="t-num">{r.s}</td>
+              <td className="t-num">{r.u}</td>
+              <td className="t-num">{r.n}</td>
               <td className="t-num">{r.tore}</td>
               <td className={`t-num ${td > 0 ? 'td-pos' : td < 0 ? 'td-neg' : ''}`}>{td > 0 ? '+' : ''}{td}</td>
               <td className="t-pts">{r.pkt}</td>
@@ -61,28 +69,34 @@ function Tabelle({ schedule, results, players, upTo }) {
 // ── Torschützen ───────────────────────────────────────────────────────────────
 function Torschuetzen({ schedule, results, players, upTo }) {
   const rows = calcTorschuetzenUpTo(schedule, results, players, upTo)
-  const medals = ['🥇', '🥈', '🥉']
-  const medalClass = ['gold-card', '', '']
+  if (rows.length === 0) return null
+  const leader = rows[0]
   return (
     <>
-      <div className="top3">
-        {rows.slice(0, 3).map((r, i) => (
-          <div key={r.i} className={`top3-card ${medalClass[i]}`}>
-            <div className="top3-medal">{medals[i]}</div>
-            <div className="top3-tore">{r.tore}</div>
-            <div className="top3-avg">Ø {r.avg.toFixed(2)}</div>
-            <div className="top3-name">{r.name}</div>
+      {/* Führender – groß hervorgehoben */}
+      {leader && (
+        <div className="tor-leader">
+          <div className="tor-leader-icons">
+            <span title="Waschmaschine">🫧</span>
+            <span title="Ball">🎯</span>
+            <span title="Kanone">💥</span>
+          </div>
+          <div className="tor-leader-tore">{leader.tore}</div>
+          <div className="tor-leader-avg">Ø {leader.avg.toFixed(2)}</div>
+          <div className="tor-leader-name">{leader.name}</div>
+        </div>
+      )}
+      {/* Rest als Liste */}
+      <div style={{ marginTop: 10 }}>
+        {rows.slice(1).map((r, i) => (
+          <div key={r.i} className="tor-row">
+            <span className="tor-rank">{i + 2}</span>
+            <span className="tor-name">{r.name}</span>
+            <span className="tor-tore">{r.tore}</span>
+            <div className="tor-bar"><div className="tor-fill" style={{ width: `${Math.round(r.tore / (leader.tore || 1) * 100)}%` }} /></div>
           </div>
         ))}
       </div>
-      {rows.slice(3).map((r, i) => (
-        <div key={r.i} className="tor-row">
-          <span className="tor-rank">{i + 4}</span>
-          <span className="tor-name">{r.name}</span>
-          <span className="tor-tore">{r.tore}</span>
-          <div className="tor-bar"><div className="tor-fill" style={{ width: `${Math.round(r.tore / (rows[0]?.tore || 1) * 100)}%` }} /></div>
-        </div>
-      ))}
     </>
   )
 }
@@ -104,7 +118,7 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag }) {
     <>
       {/* Spieltag Selector */}
       <div className="kicker-st-bar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <select
             className="kicker-st-select"
             value={spieltag}
@@ -304,14 +318,14 @@ export default function Dashboard() {
               <div className="event-name">10. Trommelschießen-WM · 06.06.2026</div>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <div className="clock">{clock}</div>
             {tournament?.started && <span className="live-badge">LIVE</span>}
           </div>
         </div>
 
         {/* Main */}
-        <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           {/* Paarungen */}
           <div style={{ padding: '20px 36px', borderRight: '0.5px solid var(--gruen40)' }}>
             <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} />
