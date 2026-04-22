@@ -203,6 +203,7 @@ export default function Dashboard() {
   const [results, setResults] = useState({})
   const [loading, setLoading] = useState(true)
   const [spieltag, setSpieltag] = useState(0)
+  const [manualOverride, setManualOverride] = useState(false)
   const [clock, setClock] = useState('')
 
   useEffect(() => {
@@ -230,7 +231,7 @@ export default function Dashboard() {
     const { data: tData } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
     if (tData?.length > 0) {
       const t = tData[0]
-      setTournament({ id: t.id, players: t.players, numMachines: t.num_machines, schedule: t.schedule, started: t.started, liveActive: t.live_active })
+      setTournament({ id: t.id, players: t.players, numMachines: t.num_machines, schedule: t.schedule, started: t.started, liveActive: t.live_active, activeSpieltag: t.active_spieltag ?? 0 })
     }
     const { data: rData } = await supabase.from('results').select('*')
     if (rData) {
@@ -240,6 +241,13 @@ export default function Dashboard() {
     }
     setLoading(false)
   }
+
+  // Folge dem Admin-Spieltag wenn kein manueller Override
+  useEffect(() => {
+    if (!manualOverride && tournament?.activeSpieltag !== undefined) {
+      setSpieltag(tournament.activeSpieltag)
+    }
+  }, [tournament?.activeSpieltag, manualOverride])
 
   if (loading) return <div className="empty">Laden…</div>
 

@@ -809,3 +809,64 @@ body {
   .kicker-score-num { font-size: 26px; }
   .kicker-match { height: 48px; }
 }
+
+/* ── Fluid Scaling für große Screens ── */
+@media (min-width: 1400px) {
+  .kicker-home, .kicker-away { font-size: clamp(22px, 1.6vw, 32px); }
+  .kicker-score-num { font-size: clamp(38px, 2.8vw, 52px); }
+  .kicker-match { height: clamp(56px, 4.5vh, 80px); }
+  .kicker-matches { gap: clamp(10px, 1vh, 18px); }
+  .kicker-m-label { font-size: clamp(12px, 0.9vw, 16px); }
+  .kicker-st-select { font-size: clamp(22px, 1.8vw, 36px); }
+  .logo { font-size: clamp(26px, 2vw, 40px) !important; }
+  .event-name { font-size: clamp(13px, 0.9vw, 18px); }
+  .clock { font-size: clamp(22px, 1.6vw, 32px) !important; }
+  .section-label { font-size: clamp(10px, 0.7vw, 14px); }
+}
+
+@media (min-width: 1800px) {
+  .kicker-home, .kicker-away { font-size: clamp(26px, 1.8vw, 38px); }
+  .kicker-score-num { font-size: clamp(44px, 3vw, 64px); }
+  .kicker-match { height: clamp(66px, 5vh, 96px); }
+}
+
+/* ── Tabelle: kompakt, kein riesiger Gap ── */
+.tabelle-table {
+  table-layout: fixed !important;
+  width: 100% !important;
+}
+.tabelle-table th:nth-child(1) { width: 28px; }
+.tabelle-table th:nth-child(2) { width: auto; }
+.tabelle-table th:nth-child(3),
+.tabelle-table th:nth-child(4),
+.tabelle-table th:nth-child(5),
+.tabelle-table th:nth-child(6),
+.tabelle-table th:nth-child(7),
+.tabelle-table th:nth-child(8),
+.tabelle-table th:nth-child(9) { width: 32px; }
+
+.tabelle-table td, .tabelle-table th {
+  padding: 7px 4px !important;
+  white-space: nowrap;
+}
+
+@media (min-width: 1400px) {
+  .tabelle-table { font-size: clamp(13px, 1vw, 18px) !important; }
+  .tabelle-table th { font-size: clamp(10px, 0.7vw, 14px) !important; }
+  .t-name { font-size: clamp(13px, 1vw, 18px) !important; }
+  .t-pts { font-size: clamp(13px, 1vw, 18px) !important; }
+  .tor-leader-tore { font-size: clamp(48px, 4vw, 80px) !important; }
+  .tor-leader-name { font-size: clamp(14px, 1.2vw, 22px) !important; }
+  .tor-leader-avg { font-size: clamp(11px, 0.8vw, 16px) !important; }
+  .tor-leader-icons { font-size: clamp(22px, 1.8vw, 36px) !important; }
+}
+
+/* ── Admin Responsiv ── */
+@media (max-width: 768px) {
+  .admin-body { padding: 16px; max-width: 100%; }
+  .setting-row input[type=number] { font-size: 18px; width: 70px; }
+  .player-input-row input[type=text] { font-size: 16px; padding: 10px 12px; }
+  .btn-start, .btn-apply, .btn-reset { font-size: 16px; padding: 12px; }
+  .tournament-active { font-size: 14px; }
+  .section-label-admin { font-size: 11px; }
+}

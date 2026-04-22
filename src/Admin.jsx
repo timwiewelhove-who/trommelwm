@@ -26,6 +26,7 @@ export default function Admin() {
 
   // Spieltag für Ergebniseintrag
   const [spieltag, setSpieltag] = useState(0)
+  const [savingSpiellag, setSavingSpieltag] = useState(false)
 
   // Score-Eingaben: { gameId: { home: 0, away: 0 } }
   const [scoreInputs, setScoreInputs] = useState({})
@@ -55,7 +56,9 @@ export default function Admin() {
     const { data } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
     if (data?.length > 0) {
       const t = data[0]
-      setTournament({ id: t.id, players: t.players, numMachines: t.num_machines, schedule: t.schedule, started: t.started, liveActive: t.live_active })
+      const activeST = t.active_spieltag ?? 0
+      setTournament({ id: t.id, players: t.players, numMachines: t.num_machines, schedule: t.schedule, started: t.started, liveActive: t.live_active, activeSpieltag: activeST })
+      setSpieltag(activeST)
       setEditNames([...t.players])
     }
     const { data: rData } = await supabase.from('results').select('*')
@@ -95,6 +98,13 @@ export default function Admin() {
       setSpieltag(0)
     }
     setSaving(false)
+  }
+
+  async function changeSpieltag(idx) {
+    setSpieltag(idx)
+    if (!tournament) return
+    await supabase.from('tournament').update({ active_spieltag: idx }).eq('id', tournament.id)
+    setTournament(t => ({ ...t, activeSpieltag: idx }))
   }
 
   async function toggleLive() {
@@ -249,7 +259,7 @@ export default function Admin() {
             {/* Spieltag wählen */}
             <div className="section-label-admin">Ergebnisse eintragen</div>
             <select className="mobile-st-select" style={{ marginBottom: 16 }}
-              value={spieltag} onChange={e => setSpieltag(parseInt(e.target.value))}>
+              value={spieltag} onChange={e => changeSpieltag(parseInt(e.target.value))}>
               {schedule.map((st, i) => {
                 const done = st.every(m => results[gameId(m.home, m.away)])
                 return <option key={i} value={i}>Spieltag {i + 1}{done ? ' ✓' : ''}</option>
