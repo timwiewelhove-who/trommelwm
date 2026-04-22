@@ -19,7 +19,7 @@ function getMatchStatus(match, allMatchesThisST, results) {
 }
 
 // ── Tabelle ───────────────────────────────────────────────────────────────────
-function Tabelle({ schedule, results, players, upTo }) {
+function Tabelle({ schedule, results, players, upTo, torLeaderIdx = new Set() }) {
   const rows = calcTableUpTo(schedule, results, upTo)
   const hinrundeEnde = Math.ceil(schedule.length / 2) - 1
   const herbstRows = calcTableUpTo(schedule, results, hinrundeEnde)
@@ -30,7 +30,7 @@ function Tabelle({ schedule, results, players, upTo }) {
   return (
     <table className="tabelle-table">
       <thead><tr>
-        <th style={{ width: 18 }}>#</th>
+        <th style={{ width: 40, minWidth: 40 }}>#</th>
         <th>Trommler</th>
         <th style={{ textAlign: 'right', width: 28 }}>Sp</th>
         <th style={{ textAlign: 'right', width: 26 }}>S</th>
@@ -45,11 +45,12 @@ function Tabelle({ schedule, results, players, upTo }) {
           const td = r.tore - r.gegen
           return (
             <tr key={r.i}>
-              <td className="t-rank">{idx + 1}</td>
+              <td className="t-rank" style={{ width: 40, minWidth: 40, paddingRight: 8 }}>{idx + 1}</td>
               <td className="t-name">
-                {idx === 0 && r.sp > 0 && <span className="leader-dot" />}
+                {idx === 0 && r.sp > 0 && <span style={{ marginRight: 4 }}>🏆</span>}
                 {players[r.i]}
-                {hinrundeDone && r.i === herbstIdx && <span className="herbst-badge">🍂</span>}
+                {torLeaderIdx.has(r.i) && <span style={{ marginLeft: 5, fontSize: 13 }}>👑</span>}
+                {hinrundeDone && r.i === herbstIdx && <span style={{ marginLeft: 4, fontSize: 13 }}>🍂</span>}
               </td>
               <td className="t-num">{r.sp}</td>
               <td className="t-num">{r.s}</td>
@@ -70,19 +71,48 @@ function Tabelle({ schedule, results, players, upTo }) {
 function Torschuetzen({ schedule, results, players, upTo }) {
   const rows = calcTorschuetzenUpTo(schedule, results, players, upTo)
   if (rows.length === 0) return null
-  const leader = rows[0]
+  const leaderTore = rows[0].tore
   return (
-    <div className="tor-leader">
-      <div className="tor-leader-icons">💣 👑</div>
-      <div className="tor-leader-tore">{leader.tore}</div>
-      <div className="tor-leader-avg">Ø {leader.avg.toFixed(2)}</div>
-      <div className="tor-leader-name">{leader.name}</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {rows.map((r, i) => (
+        <div key={r.i} className="tor-row">
+          <span className="tor-rank">{i + 1}</span>
+          <span className="tor-name">
+            {r.name}
+            {r.tore === leaderTore && r.tore > 0 && <span style={{ marginLeft: 5, fontSize: 14 }}>👑</span>}
+          </span>
+          <span className="tor-tore">{r.tore}</span>
+          <div className="tor-bar"><div className="tor-fill" style={{ width: `${Math.round(r.tore / leaderTore * 100)}%` }} /></div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Mobile: alle Torschützen als Liste
+function TorschuetzenMobile({ schedule, results, players, upTo }) {
+  const rows = calcTorschuetzenUpTo(schedule, results, players, upTo)
+  if (rows.length === 0) return null
+  const leaderTore = rows[0].tore
+  return (
+    <div>
+      {rows.map((r, i) => (
+        <div key={r.i} className="mobile-tor-row">
+          <span className="mobile-tor-rank">{i + 1}</span>
+          <span className="mobile-tor-name">
+            {r.name}
+            {r.tore === leaderTore && r.tore > 0 && <span style={{ marginLeft: 5 }}>👑</span>}
+          </span>
+          <span className="mobile-tor-tore">{r.tore}</span>
+          <span className="mobile-tor-avg">Ø {r.avg.toFixed(2)}</span>
+        </div>
+      ))}
     </div>
   )
 }
 
 // ── Spieltag-Ansicht (Desktop + Mobile) ───────────────────────────────────────
-function SpieltagView({ schedule, results, players, spieltag, setSpieltag }) {
+function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx }) {
   const doneSet = new Set(
     schedule.map((st, i) => st.every(m => results[gameId(m.home, m.away)]) ? i : -1).filter(i => i >= 0)
   )
@@ -134,14 +164,14 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag }) {
             return (
               <div key={`${ri}-${idx}`} className={`kicker-match ${status}`}>
                 <span className="kicker-m-label">M{m.machine + 1}</span>
-                <div className="kicker-home">{players[m.home]}</div>
+                <div className="kicker-home">{players[m.home]}{torLeaderIdx.has(m.home) && <span style={{ marginLeft: 5, fontSize: '0.7em' }}>👑</span>}</div>
                 <div className="kicker-score">
                   {status === 'done'
                     ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
                     : <span className="kicker-score-pending">– : –</span>
                   }
                 </div>
-                <div className="kicker-away">{players[m.away]}</div>
+                <div className="kicker-away">{players[m.away]}{torLeaderIdx.has(m.away) && <span style={{ marginLeft: 5, fontSize: '0.7em' }}>👑</span>}</div>
               </div>
             )
           })
@@ -179,9 +209,12 @@ function MobileView({ schedule, results, players }) {
       </div>
 
       <div className="mobile-content">
-        {tab === 'spieltage' && (
-          <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} />
-        )}
+        {tab === 'spieltage' && (() => {
+          const allTorRows = calcTorschuetzenUpTo(schedule, results, players, latestST)
+          const leaderTore = allTorRows[0]?.tore || 0
+          const leaderSet = new Set(allTorRows.filter(r => r.tore === leaderTore && leaderTore > 0).map(r => r.i))
+          return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} torLeaderIdx={leaderSet} />
+        })()}
         {tab === 'tabelle' && (
           <div style={{ padding: '12px 16px' }}>
             <Tabelle schedule={schedule} results={results} players={players} upTo={latestST} />
@@ -189,7 +222,7 @@ function MobileView({ schedule, results, players }) {
         )}
         {tab === 'torschuetzen' && (
           <div style={{ padding: '12px 16px' }}>
-            <Torschuetzen schedule={schedule} results={results} players={players} upTo={latestST} />
+            <TorschuetzenMobile schedule={schedule} results={results} players={players} upTo={latestST} />
           </div>
         )}
       </div>
@@ -314,19 +347,27 @@ export default function Dashboard() {
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr' }}>
           {/* Paarungen */}
           <div style={{ padding: '24px 48px', borderRight: '0.5px solid var(--gruen40)' }}>
-            <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} />
+            {(() => {
+            const torRows = calcTorschuetzenUpTo(schedule, players ? schedule.map(() => null) : [], players, getLatestSpieltag())
+            const allTorRows = calcTorschuetzenUpTo(schedule, results, players, getLatestSpieltag())
+            const leaderTore = allTorRows[0]?.tore || 0
+            const leaderSet = new Set(allTorRows.filter(r => r.tore === leaderTore && leaderTore > 0).map(r => r.i))
+            return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={s => { setManualOverride(true); setSpieltag(s) }} torLeaderIdx={leaderSet} />
+          })()}
           </div>
 
           {/* Sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '20px 24px', borderBottom: '0.5px solid var(--gruen40)' }}>
               <div className="section-label">Tabelle</div>
-              <Tabelle schedule={schedule} results={results} players={players} upTo={latestST} />
+              {(() => {
+                const allTorRows = calcTorschuetzenUpTo(schedule, results, players, latestST)
+                const leaderTore = allTorRows[0]?.tore || 0
+                const leaderSet = new Set(allTorRows.filter(r => r.tore === leaderTore && leaderTore > 0).map(r => r.i))
+                return <Tabelle schedule={schedule} results={results} players={players} upTo={latestST} torLeaderIdx={leaderSet} />
+              })()}
             </div>
-            <div style={{ padding: '20px 24px', flex: 1 }}>
-              <div className="section-label">Torschützen</div>
-              <Torschuetzen schedule={schedule} results={results} players={players} upTo={latestST} />
-            </div>
+
           </div>
         </div>
 

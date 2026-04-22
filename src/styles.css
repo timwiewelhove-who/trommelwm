@@ -288,7 +288,7 @@ body {
 .page-info { font-size: 11px; color: var(--weiss30); }
 
 /* ── Tabelle ── */
-.tabelle-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+.tabelle-table { width: 100%; border-collapse: collapse; font-size: 15px; table-layout: fixed; }
 .tabelle-table th {
   color: var(--weiss30);
   font-weight: 600;
@@ -300,7 +300,7 @@ body {
 }
 .tabelle-table td { padding: 5px 4px; border-bottom: 0.5px solid rgba(255,255,255,.05); color: var(--weiss60); }
 .tabelle-table tr:last-child td { border-bottom: none; }
-.t-rank { width: 42px; color: var(--weiss30); padding-right: 6px !important; }
+.t-rank { min-width: 40px; width: 40px; color: var(--weiss30); padding-right: 8px !important; white-space: nowrap; }
 .t-name { font-weight: 600; color: var(--weiss); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.01em; }
 .t-num { text-align: right; color: var(--weiss30); }
 .t-pts { text-align: right; color: var(--weiss); font-weight: 600; }
@@ -762,9 +762,6 @@ body {
 }
 
 /* Tabelle größer */
-.tabelle-table { font-size: 17px !important; table-layout: auto !important; }
-.tabelle-table th { font-size: 13px !important; }
-.t-name { font-size: 17px !important; font-weight: 600 !important; }
 
 /* Torschützen-Leader */
 .tor-leader {
@@ -849,10 +846,6 @@ body {
 }
 
 @media (min-width: 1400px) {
-  .tabelle-table { font-size: clamp(13px, 1vw, 18px) !important; }
-  .tabelle-table th { font-size: clamp(10px, 0.7vw, 14px) !important; }
-  .t-name { font-size: clamp(13px, 1vw, 18px) !important; }
-  .t-pts { font-size: clamp(13px, 1vw, 18px) !important; }
   .tor-leader-tore { font-size: clamp(48px, 4vw, 80px) !important; }
   .tor-leader-name { font-size: clamp(14px, 1.2vw, 22px) !important; }
   .tor-leader-avg { font-size: clamp(11px, 0.8vw, 16px) !important; }
