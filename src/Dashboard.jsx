@@ -47,9 +47,9 @@ function Tabelle({ schedule, results, players, upTo, torLeaderIdx = new Set() })
             <tr key={r.i}>
               <td className="t-rank" style={{ width: 40, minWidth: 40, paddingRight: 8 }}>{idx + 1}</td>
               <td className="t-name">
-                {idx === 0 && r.sp > 0 && <span style={{ marginRight: 4 }}>🏆</span>}
-                {torLeaderIdx.has(r.i) && r.sp > 0 && !(idx === 0 && r.sp > 0) && <span style={{ marginRight: 4, fontSize: 13 }}>👑</span>}
-                {hinrundeDone && r.i === herbstIdx && <span style={{ marginRight: 4, fontSize: 13 }}>🍂</span>}
+                {idx === 0 && r.sp > 0 && <span style={{ marginRight: 5 }}>🏆</span>}
+                {torLeaderIdx.has(r.i) && r.sp > 0 && <span style={{ marginRight: 5, fontSize: 14 }}>👑</span>}
+                {hinrundeDone && r.i === herbstIdx && <span style={{ marginRight: 5, fontSize: 13 }}>🍂</span>}
                 {players[r.i]}
               </td>
               <td className="t-num">{r.sp}</td>
@@ -164,14 +164,14 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLe
             return (
               <div key={`${ri}-${idx}`} className={`kicker-match ${status}`}>
                 <span className="kicker-m-label">M{m.machine + 1}</span>
-                <div className="kicker-home">{torLeaderIdx.has(m.home) && <span style={{ marginRight: 5, fontSize: '0.75em' }}>👑</span>}{players[m.home]}</div>
+                <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{torLeaderIdx.has(m.home) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.home]}</span></div>
                 <div className="kicker-score">
                   {status === 'done'
                     ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
                     : <span className="kicker-score-pending">– : –</span>
                   }
                 </div>
-                <div className="kicker-away">{torLeaderIdx.has(m.away) && <span style={{ marginRight: 5, fontSize: '0.75em' }}>👑</span>}{players[m.away]}</div>
+                <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{torLeaderIdx.has(m.away) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.away]}</span></div>
               </div>
             )
           })
