@@ -874,3 +874,106 @@ body {
 }
 .kicker-match.active .kicker-m-label { color: rgba(74,222,128,.8); }
 .kicker-match.done .kicker-m-label { color: var(--gold); }
+
+/* ── Mobile Header neu ── */
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px 10px;
+  border-bottom: 0.5px solid var(--gruen40);
+}
+.mobile-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.mobile-header-logo {
+  height: 52px;
+  width: auto;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.mobile-header-brand { display: flex; flex-direction: column; }
+.mobile-header-trmmlr {
+  font-family: 'Bayon', sans-serif;
+  font-size: 28px;
+  color: var(--gold);
+  letter-spacing: .05em;
+  line-height: 1;
+}
+.mobile-header-sub {
+  font-size: 13px;
+  color: var(--weiss60);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.mobile-header-date {
+  font-size: 13px;
+  color: var(--weiss30);
+  line-height: 1.2;
+}
+.mobile-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.mobile-header-clock {
+  font-family: 'Bayon', sans-serif;
+  font-size: 20px;
+  color: var(--weiss);
+}
+
+/* ── Mobile Match Card ── */
+.mobile-match-card {
+  background: rgba(255,255,255,.04);
+  border: 0.5px solid var(--gruen40);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.mobile-match-card.done {
+  background: rgba(176,137,45,.07);
+  border-color: rgba(176,137,45,.28);
+}
+.mobile-match-card.pending { opacity: 0.35; }
+.mobile-match-machine {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--weiss30);
+  text-align: center;
+  margin-bottom: 6px;
+}
+.mobile-match-card.done .mobile-match-machine { color: var(--gold); }
+.mobile-match-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-match-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--weiss);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mobile-match-name.home { text-align: right; }
+.mobile-match-name.away { text-align: left; }
+.mobile-match-score {
+  font-family: 'Bayon', sans-serif;
+  font-size: 22px;
+  color: var(--gold);
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: center;
+}
+.mobile-match-card:not(.done) .mobile-match-score {
+  color: var(--weiss30);
+  font-size: 16px;
+}

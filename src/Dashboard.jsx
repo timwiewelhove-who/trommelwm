@@ -95,19 +95,27 @@ function TorschuetzenMobile({ schedule, results, players, upTo }) {
   if (rows.length === 0) return null
   const leaderTore = rows[0].tore
   return (
-    <div>
-      {rows.map((r, i) => (
-        <div key={r.i} className="mobile-tor-row">
-          <span className="mobile-tor-rank">{i + 1}</span>
-          <span className="mobile-tor-name">
-            {r.name}
-            {r.tore === leaderTore && r.tore > 0 && <span style={{ marginLeft: 5 }}>👑</span>}
-          </span>
-          <span className="mobile-tor-tore">{r.tore}</span>
-          <span className="mobile-tor-avg">Ø {r.avg.toFixed(2)}</span>
-        </div>
-      ))}
-    </div>
+    <table className="mobile-table" style={{ marginTop: 8 }}>
+      <thead><tr>
+        <th style={{ width: 32 }}>#</th>
+        <th style={{ textAlign: 'left' }}>Trommler</th>
+        <th style={{ textAlign: 'right', width: 40 }}>T</th>
+        <th style={{ textAlign: 'right', width: 60 }}>Ø</th>
+      </tr></thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr key={r.i}>
+            <td>{i + 1}</td>
+            <td className="mobile-t-name">
+              {r.tore === leaderTore && r.tore > 0 && <span style={{ marginRight: 4 }}>👑</span>}
+              {r.name}
+            </td>
+            <td style={{ textAlign: 'right', color: 'var(--gold)', fontWeight: 600 }}>{r.tore}</td>
+            <td style={{ textAlign: 'right', color: 'var(--weiss30)', fontSize: 13 }}>{r.avg.toFixed(2)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
 
