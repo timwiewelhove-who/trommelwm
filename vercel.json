@@ -1,9 +1,0 @@
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
-  "crons": [
-    {
-      "path": "/api/health",
-      "schedule": "0 8 */4 * *"
-    }
-  ]
-}
