@@ -112,7 +112,7 @@ function TorschuetzenMobile({ schedule, results, players, upTo }) {
 }
 
 // ── Spieltag-Ansicht (Desktop + Mobile) ───────────────────────────────────────
-function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx }) {
+function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx = new Set(), tableLeaderIdx = -1 }) {
   const doneSet = new Set(
     schedule.map((st, i) => st.every(m => results[gameId(m.home, m.away)]) ? i : -1).filter(i => i >= 0)
   )
@@ -164,14 +164,14 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLe
             return (
               <div key={`${ri}-${idx}`} className={`kicker-match ${status}`}>
                 <span className="kicker-m-label">M{m.machine + 1}</span>
-                <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{torLeaderIdx.has(m.home) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.home]}</span></div>
+                <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{tableLeaderIdx === m.home && <span style={{ marginRight: 4 }}>🏆</span>}{torLeaderIdx?.has(m.home) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.home]}</span></div>
                 <div className="kicker-score">
                   {status === 'done'
                     ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
                     : <span className="kicker-score-pending">– : –</span>
                   }
                 </div>
-                <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{torLeaderIdx.has(m.away) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.away]}</span></div>
+                <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{tableLeaderIdx === m.away && <span style={{ marginRight: 4 }}>🏆</span>}{torLeaderIdx?.has(m.away) && <span style={{ marginRight: 4 }}>👑</span>}{players[m.away]}</span></div>
               </div>
             )
           })
@@ -213,7 +213,9 @@ function MobileView({ schedule, results, players }) {
           const allTorRows = calcTorschuetzenUpTo(schedule, results, players, latestST)
           const leaderTore = allTorRows[0]?.tore || 0
           const leaderSet = new Set(allTorRows.filter(r => r.tore === leaderTore && leaderTore > 0).map(r => r.i))
-          return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} torLeaderIdx={leaderSet} />
+          const tableRows0 = calcTableUpTo(schedule, results, latestST)
+          const tableLeader = tableRows0[0]?.sp > 0 ? tableRows0[0].i : -1
+          return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeader} />
         })()}
         {tab === 'tabelle' && (
           <div style={{ padding: '12px 16px' }}>
@@ -352,7 +354,9 @@ export default function Dashboard() {
             const allTorRows = calcTorschuetzenUpTo(schedule, results, players, getLatestSpieltag())
             const leaderTore = allTorRows[0]?.tore || 0
             const leaderSet = new Set(allTorRows.filter(r => r.tore === leaderTore && leaderTore > 0).map(r => r.i))
-            return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={s => { setManualOverride(true); setSpieltag(s) }} torLeaderIdx={leaderSet} />
+            const tableRowsD = calcTableUpTo(schedule, results, latestST)
+            const tableLeaderD = tableRowsD[0]?.sp > 0 ? tableRowsD[0].i : -1
+            return <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={s => { setManualOverride(true); setSpieltag(s) }} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeaderD} />
           })()}
           </div>
 
