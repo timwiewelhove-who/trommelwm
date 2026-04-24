@@ -977,3 +977,24 @@ body {
   color: var(--weiss30);
   font-size: 16px;
 }
+
+/* ── Mobile Spieltag Nav ── */
+.mobile-st-wrapper { padding: 14px 16px 8px; }
+.mobile-st-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+.mobile-st-sel { font-size: 20px !important; }
+.mobile-st-nav {
+  display: flex;
+  justify-content: space-between;
+}
+.mobile-matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 24px;
+}
