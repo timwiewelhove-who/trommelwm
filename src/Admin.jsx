@@ -243,38 +243,63 @@ export default function Admin() {
               <span className="kicker-st-info">{currentMatches.length} Paarungen</span>
             </div>
 
-            <div className="admin-matches">
-              {currentMatches.map((m, idx) => {
-                const gid = gameId(m.home, m.away)
-                const r = results[gid]
-                const hVal = scoreInputs[gid]?.home ?? r?.home ?? 0
-                const aVal = scoreInputs[gid]?.away ?? r?.away ?? 0
-                return (
-                  <div key={idx} className={`admin-match-card ${r ? 'done' : 'active'}`}>
-                    <div className="admin-match-machine">Maschine {m.machine + 1}</div>
-                    <div className="admin-match-row">
-                      <div className="admin-match-name">{players[m.home]}</div>
-                      <div className="admin-match-score">
-                        <ScoreInput value={hVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: v, away: scoreInputs[gid]?.away ?? r?.away ?? 0 } }))} />
-                        <span style={{ color: 'var(--weiss30)', fontFamily: 'Bayon, sans-serif', fontSize: 20 }}>:</span>
-                        <ScoreInput value={aVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: scoreInputs[gid]?.home ?? r?.home ?? 0, away: v } }))} />
+            <div className="kicker-matches">
+              {(() => {
+                const numM = schedule[0] ? Math.max(...schedule[0].map(m => m.machine)) + 1 : 6
+                const rounds = []
+                for (let i = 0; i < currentMatches.length; i += numM) rounds.push(currentMatches.slice(i, i + numM))
+
+                function getStatus(match) {
+                  const gid = gameId(match.home, match.away)
+                  if (results[gid]) return 'done'
+                  const idx = currentMatches.indexOf(match)
+                  const sameM = currentMatches.filter((m, i) => m.machine === match.machine && i < idx)
+                  return sameM.every(m => results[gameId(m.home, m.away)]) ? 'active' : 'pending'
+                }
+
+                return rounds.flatMap((round, ri) => [
+                  ...(ri > 0 ? [<div key={`div-${ri}`} className="round-divider">
+                    <div className="round-divider-line" />
+                    <span className="round-divider-label">Nächste Runde</span>
+                    <div className="round-divider-line" />
+                  </div>] : []),
+                  ...round.map((m, idx) => {
+                    const gid = gameId(m.home, m.away)
+                    const r = results[gid]
+                    const status = getStatus(m)
+                    const hVal = scoreInputs[gid]?.home ?? r?.home ?? 0
+                    const aVal = scoreInputs[gid]?.away ?? r?.away ?? 0
+                    return (
+                      <div key={`${ri}-${idx}`} className={`kicker-match ${status}`} style={{ flexDirection: 'column', height: 'auto', padding: '12px 16px', gap: 8 }}>
+                        {/* Zeile 1: M-Label + Namen + Score */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
+                          <span className="kicker-m-label">M{m.machine + 1}</span>
+                          <div className="kicker-home" style={{ fontSize: 16 }}>{players[m.home]}</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                            <ScoreInput value={hVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: v, away: scoreInputs[gid]?.away ?? r?.away ?? 0 } }))} />
+                            <span style={{ color: 'var(--weiss30)', fontFamily: 'Bayon, sans-serif', fontSize: 20 }}>:</span>
+                            <ScoreInput value={aVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: scoreInputs[gid]?.home ?? r?.home ?? 0, away: v } }))} />
+                          </div>
+                          <div className="kicker-away" style={{ fontSize: 16 }}>{players[m.away]}</div>
+                        </div>
+                        {/* Zeile 2: Buttons – nur wenn active oder done */}
+                        {status !== 'pending' && (
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                            <button className="admin-btn-confirm" onClick={() => confirmResult(m.home, m.away, hVal, aVal)}>
+                              {r ? 'Korrigieren' : 'Bestätigen'}
+                            </button>
+                            <button className="admin-btn-delete"
+                              onClick={() => r && deleteResult(m.home, m.away)}
+                              style={{ visibility: r ? 'visible' : 'hidden' }}>
+                              Löschen
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      <div className="admin-match-name right">{players[m.away]}</div>
-                    </div>
-                    <div className="admin-match-actions">
-                      <button className="admin-btn-confirm" onClick={() => confirmResult(m.home, m.away, hVal, aVal)}>
-                        {r ? 'Korrigieren' : 'Bestätigen'}
-                      </button>
-                      <button
-                        className="admin-btn-delete"
-                        onClick={() => r && deleteResult(m.home, m.away)}
-                        style={{ visibility: r ? 'visible' : 'hidden' }}>
-                        Löschen
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
+                    )
+                  })
+                ])
+              })()}
             </div>
           </div>
 
