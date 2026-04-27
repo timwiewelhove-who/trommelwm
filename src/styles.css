@@ -998,3 +998,133 @@ body {
   gap: 8px;
   padding: 0 16px 24px;
 }
+
+/* ── Admin Layout ── */
+.admin-main {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+}
+.admin-left {
+  padding: 20px 32px;
+  border-right: 0.5px solid var(--gruen40);
+  overflow-y: auto;
+}
+.admin-right {
+  padding: 20px;
+  overflow-y: auto;
+}
+.admin-st-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Admin Match Card – analog Mobile Dashboard */
+.admin-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.admin-match-card {
+  background: rgba(255,255,255,.04);
+  border: 0.5px solid var(--gruen40);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.admin-match-card.done {
+  background: rgba(176,137,45,.07);
+  border-color: rgba(176,137,45,.3);
+}
+.admin-match-card.active {
+  border-color: rgba(74,222,128,.25);
+}
+.admin-match-machine {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--weiss30);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.admin-match-card.done .admin-match-machine { color: var(--gold); }
+.admin-match-card.active .admin-match-machine { color: rgba(74,222,128,.7); }
+
+.admin-match-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.admin-match-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--weiss);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-match-name.right { text-align: center; }
+.admin-match-score {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.admin-match-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 34px;
+  align-items: center;
+}
+.admin-btn-confirm {
+  padding: 7px 20px;
+  border: none;
+  border-radius: 6px;
+  background: var(--btn-gruen);
+  color: var(--weiss);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.admin-btn-confirm:hover { background: var(--btn-gruen-hover); }
+.admin-match-card.done .admin-btn-confirm {
+  background: var(--gold);
+  color: var(--schwarz);
+}
+.admin-match-card.done .admin-btn-confirm:hover { background: var(--gold-dark); }
+.admin-btn-delete {
+  padding: 7px 16px;
+  border: 0.5px solid rgba(248,113,113,.4);
+  border-radius: 6px;
+  background: rgba(248,113,113,.1);
+  color: #f87171;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Mobile Admin: einspaltiges Layout */
+@media (max-width: 1024px) {
+  .admin-main {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .admin-left {
+    padding: 16px !important;
+    border-right: none !important;
+    border-bottom: 0.5px solid var(--gruen40);
+  }
+  .admin-right {
+    padding: 16px !important;
+  }
+  .admin-match-name { font-size: 14px; }
+  .admin-st-bar { flex-wrap: wrap; }
+}

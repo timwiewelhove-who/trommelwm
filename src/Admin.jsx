@@ -187,14 +187,14 @@ export default function Admin() {
             <div className="event-name">Admin · 10. Trommelschießen-WM</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
           {tournament?.started && (
-            <button onClick={toggleLive} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: tournament.liveActive ? 'var(--btn-gruen)' : 'rgba(255,255,255,.1)', color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, fontSize: 13 }}>
+            <button onClick={toggleLive} style={{ padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', background: tournament.liveActive ? 'var(--btn-gruen)' : 'rgba(255,255,255,.1)', color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap' }}>
               {tournament.liveActive ? '🟢 Live AN' : '⚫ Live AUS'}
             </button>
           )}
           <button onClick={() => { sessionStorage.removeItem('trmmlr_admin'); setAuth(false) }}
-            style={{ background: 'none', border: '0.5px solid var(--gruen40)', color: 'var(--weiss60)', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13, fontFamily: 'Nunito Sans, sans-serif' }}>
+            style={{ background: 'none', border: '0.5px solid var(--gruen40)', color: 'var(--weiss60)', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'Nunito Sans, sans-serif', whiteSpace: 'nowrap' }}>
             Abmelden
           </button>
         </div>
@@ -229,11 +229,11 @@ export default function Admin() {
           </>}
         </div>
       ) : (
-        /* ── Turnier läuft: 2-spaltig ── */
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px' }}>
-          {/* Links: Ergebnisse */}
-          <div style={{ padding: '20px 32px', borderRight: '0.5px solid var(--gruen40)', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        /* ── Turnier läuft ── */
+        <div className="admin-main">
+          {/* Ergebnisse */}
+          <div className="admin-left">
+            <div className="admin-st-bar">
               <select className="kicker-st-select" value={spieltag} onChange={e => changeSpieltag(parseInt(e.target.value))}>
                 {schedule.map((st, i) => {
                   const done = st.every(m => results[gameId(m.home, m.away)])
@@ -243,38 +243,43 @@ export default function Admin() {
               <span className="kicker-st-info">{currentMatches.length} Paarungen</span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="admin-matches">
               {currentMatches.map((m, idx) => {
                 const gid = gameId(m.home, m.away)
                 const r = results[gid]
                 const hVal = scoreInputs[gid]?.home ?? r?.home ?? 0
                 const aVal = scoreInputs[gid]?.away ?? r?.away ?? 0
                 return (
-                  <div key={idx} className={`kicker-match ${r ? 'done' : 'active'}`} style={{ cursor: 'default' }}>
-                    <span className="kicker-m-label">M{m.machine + 1}</span>
-                    <div className="kicker-home" style={{ fontSize: 16 }}>{players[m.home]}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                      <ScoreInput value={hVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: v, away: scoreInputs[gid]?.away ?? r?.away ?? 0 } }))} />
-                      <span style={{ color: 'var(--weiss30)', fontFamily: 'Bayon, sans-serif', fontSize: 20 }}>:</span>
-                      <ScoreInput value={aVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: scoreInputs[gid]?.home ?? r?.home ?? 0, away: v } }))} />
-                      {!r
-                        ? <button onClick={() => confirmResult(m.home, m.away, hVal, aVal)}
-                            style={{ background: '#3ab76a', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 14px', fontFamily: 'Nunito Sans, sans-serif', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginLeft: 4 }}>✓</button>
-                        : <button onClick={() => confirmResult(m.home, m.away, hVal, aVal)}
-                            style={{ background: 'var(--gold)', color: '#000', border: 'none', borderRadius: 6, padding: '8px 14px', fontFamily: 'Nunito Sans, sans-serif', fontSize: 15, fontWeight: 700, cursor: 'pointer', marginLeft: 4 }}>✓</button>
-                      }
-                      {r && <button onClick={() => deleteResult(m.home, m.away)}
-                        style={{ background: 'rgba(248,113,113,.2)', color: '#f87171', border: '0.5px solid rgba(248,113,113,.3)', borderRadius: 6, padding: '8px 10px', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>✕</button>}
+                  <div key={idx} className={`admin-match-card ${r ? 'done' : 'active'}`}>
+                    <div className="admin-match-machine">Maschine {m.machine + 1}</div>
+                    <div className="admin-match-row">
+                      <div className="admin-match-name">{players[m.home]}</div>
+                      <div className="admin-match-score">
+                        <ScoreInput value={hVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: v, away: scoreInputs[gid]?.away ?? r?.away ?? 0 } }))} />
+                        <span style={{ color: 'var(--weiss30)', fontFamily: 'Bayon, sans-serif', fontSize: 20 }}>:</span>
+                        <ScoreInput value={aVal} onChange={v => setScoreInputs(prev => ({ ...prev, [gid]: { home: scoreInputs[gid]?.home ?? r?.home ?? 0, away: v } }))} />
+                      </div>
+                      <div className="admin-match-name right">{players[m.away]}</div>
                     </div>
-                    <div className="kicker-away" style={{ fontSize: 16 }}>{players[m.away]}</div>
+                    <div className="admin-match-actions">
+                      <button className="admin-btn-confirm" onClick={() => confirmResult(m.home, m.away, hVal, aVal)}>
+                        {r ? 'Korrigieren' : 'Bestätigen'}
+                      </button>
+                      <button
+                        className="admin-btn-delete"
+                        onClick={() => r && deleteResult(m.home, m.away)}
+                        style={{ visibility: r ? 'visible' : 'hidden' }}>
+                        Löschen
+                      </button>
+                    </div>
                   </div>
                 )
               })}
             </div>
           </div>
 
-          {/* Rechts: Namen + Settings */}
-          <div style={{ padding: '20px 20px', overflowY: 'auto' }}>
+          {/* Namen */}
+          <div className="admin-right">
             <div className="section-label-admin">Trommler</div>
             {!editMode ? (
               <>
@@ -303,7 +308,6 @@ export default function Admin() {
                 <button className="btn-apply" onClick={() => { setEditMode(false); setEditNames([...players]) }}>Abbrechen</button>
               </>
             )}
-
             <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
             <button className="btn-reset" onClick={resetTournament}>Neu einrichten</button>
           </div>
