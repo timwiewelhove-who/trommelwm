@@ -187,6 +187,55 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
   setTimeout(() => setSaveMsg(''), 4000)
 }
 
+
+// ─── Snapshot erstellen ───────────────────────────────────────────────────────
+async function createSnapshot(label, setSaving, setSaveMsg) {
+  setSaving(true)
+  const [
+    { data: ewige }, { data: rangliste }, { data: events }, { data: abschluss }
+  ] = await Promise.all([
+    supabase.from('ewige_tabelle').select('*').order('pl'),
+    supabase.from('weltrangliste').select('*').order('pl'),
+    supabase.from('wm_events').select('*').order('jahr'),
+    supabase.from('abschlusstabellen').select('*').order('jahr').order('pl'),
+  ])
+  await supabase.from('snapshots').insert({
+    label,
+    ewige_tabelle: ewige,
+    weltrangliste: rangliste,
+    wm_events: events,
+    abschlusstabellen: abschluss,
+  })
+  setSaving(false)
+  setSaveMsg('✓ Snapshot gespeichert!')
+  setTimeout(() => setSaveMsg(''), 3000)
+}
+
+// ─── Snapshot wiederherstellen ────────────────────────────────────────────────
+async function restoreSnapshot(snapshot, setSaving, setSaveMsg) {
+  if (!confirm(`Snapshot "${snapshot.label}" wiederherstellen? Alle aktuellen Archiv-Daten werden überschrieben.`)) return
+  setSaving(true)
+
+  // Alles löschen und neu einspielen
+  await supabase.from('ewige_tabelle').delete().neq('id', 0)
+  await supabase.from('weltrangliste').delete().neq('id', 0)
+  await supabase.from('wm_events').delete().neq('id', 0)
+  await supabase.from('abschlusstabellen').delete().neq('id', 0)
+
+  if (snapshot.ewige_tabelle?.length)
+    await supabase.from('ewige_tabelle').insert(snapshot.ewige_tabelle.map(({id,...r})=>r))
+  if (snapshot.weltrangliste?.length)
+    await supabase.from('weltrangliste').insert(snapshot.weltrangliste.map(({id,...r})=>r))
+  if (snapshot.wm_events?.length)
+    await supabase.from('wm_events').insert(snapshot.wm_events.map(({id,...r})=>r))
+  if (snapshot.abschlusstabellen?.length)
+    await supabase.from('abschlusstabellen').insert(snapshot.abschlusstabellen.map(({id,...r})=>r))
+
+  setSaving(false)
+  setSaveMsg('✓ Snapshot wiederhergestellt!')
+  setTimeout(() => setSaveMsg(''), 3000)
+}
+
 export default function Admin() {
   const [auth, setAuth] = useState(false)
   const [pwInput, setPwInput] = useState('')
@@ -196,6 +245,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
+  const [snapshots, setSnapshots] = useState([])
+  const [showSnapshots, setShowSnapshots] = useState(false)
+  const [snapshotLabel, setSnapshotLabel] = useState('')
   const [numMachines, setNumMachines] = useState(6)
   const [numPlayersStr, setNumPlayersStr] = useState('10')
   const [playerNames, setPlayerNames] = useState(Array(10).fill(''))
@@ -212,6 +264,7 @@ export default function Admin() {
   useEffect(() => {
     if (!auth) return
     loadData()
+    loadSnapshots()
     const sub = supabase.channel('admin-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
         if (payload.eventType === 'DELETE') {
@@ -225,6 +278,11 @@ export default function Admin() {
       .subscribe()
     return () => supabase.removeChannel(sub)
   }, [auth])
+
+  async function loadSnapshots() {
+    const { data } = await supabase.from('snapshots').select('*').order('created_at', { ascending: false })
+    if (data) setSnapshots(data)
+  }
 
   async function loadData() {
     const { data } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
@@ -490,6 +548,54 @@ export default function Admin() {
 
             {/* Export & Abschließen */}
             <div className="section-label-admin">Turnier-Aktionen</div>
+
+            {/* Snapshot */}
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+                <input
+                  type="text"
+                  placeholder="Snapshot-Name (z.B. vor Test)"
+                  value={snapshotLabel}
+                  onChange={e => setSnapshotLabel(e.target.value)}
+                  style={{ flex: 1, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13 }}
+                />
+                <button
+                  className="btn-apply"
+                  style={{ whiteSpace: 'nowrap', padding: '7px 12px' }}
+                  onClick={() => {
+                    if (!snapshotLabel.trim()) { setSaveMsg('Bitte Namen eingeben'); setTimeout(() => setSaveMsg(''), 2000); return }
+                    createSnapshot(snapshotLabel.trim(), setSaving, setSaveMsg).then(() => { setSnapshotLabel(''); loadSnapshots() })
+                  }}>
+                  💾 Snapshot
+                </button>
+              </div>
+              {snapshots.length > 0 && (
+                <button
+                  className="btn-apply"
+                  style={{ width: '100%', marginBottom: 0, fontSize: 12 }}
+                  onClick={() => setShowSnapshots(s => !s)}>
+                  {showSnapshots ? '▲' : '▼'} {snapshots.length} Snapshot{snapshots.length > 1 ? 's' : ''} verfügbar
+                </button>
+              )}
+              {showSnapshots && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {snapshots.map(s => (
+                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', background: 'rgba(255,255,255,.04)', borderRadius: 6, border: '0.5px solid var(--gruen40)' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 13, color: 'var(--weiss)', fontWeight: 600 }}>{s.label}</div>
+                        <div style={{ fontSize: 11, color: 'var(--weiss40)' }}>{new Date(s.created_at).toLocaleString('de-DE')}</div>
+                      </div>
+                      <button
+                        className="btn-apply"
+                        style={{ padding: '4px 10px', fontSize: 12, whiteSpace: 'nowrap' }}
+                        onClick={() => restoreSnapshot(s, setSaving, setSaveMsg).then(loadSnapshots)}>
+                        ↩ Restore
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {saveMsg && !editMode && (
               <div style={{ color: '#4ade80', fontSize: 13, marginBottom: 12, padding: '8px 12px', background: 'rgba(74,222,128,.1)', borderRadius: 6 }}>
