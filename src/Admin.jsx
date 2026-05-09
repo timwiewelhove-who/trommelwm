@@ -1,36 +1,190 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
-import { buildSchedule, gameId } from './logic'
+import { buildSchedule, gameId, calcTableUpTo, calcTorschuetzenUpTo } from './logic'
 import './styles.css'
 
 const ADMIN_PASSWORD = 'trommel2026'
 
-// Score-Eingabe: sauber ohne Autocomplete-5-Bug
 function ScoreInput({ value, onChange }) {
   const [display, setDisplay] = useState(String(value))
-
   useEffect(() => { setDisplay(String(value)) }, [value])
-
   function handleChange(e) {
     const raw = e.target.value.replace(/[^0-9]/g, '')
     if (raw === '') { setDisplay(''); onChange(0); return }
     const n = Math.min(5, parseInt(raw))
-    setDisplay(String(n))
-    onChange(n)
+    setDisplay(String(n)); onChange(n)
   }
-
-  function handleFocus(e) { e.target.select() }
-
   return (
-    <input
-      inputMode="numeric"
-      pattern="[0-5]"
-      value={display}
-      onChange={handleChange}
-      onFocus={handleFocus}
+    <input inputMode="numeric" pattern="[0-5]" value={display}
+      onChange={handleChange} onFocus={e => e.target.select()}
       style={{ width: 48, textAlign: 'center', fontFamily: 'Bayon, sans-serif', fontSize: 26, padding: '6px 2px', background: 'rgba(255,255,255,.08)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', WebkitAppearance: 'none', MozAppearance: 'textfield' }}
     />
   )
+}
+
+// ─── Excel-Export ─────────────────────────────────────────────────────────────
+function exportExcel(players, schedule, results, jahr = 2026) {
+  // Abschlusstabelle berechnen
+  const latest = schedule.length - 1
+  const rows = calcTableUpTo(schedule, results, latest)
+
+  // CSV-Inhalt Abschlusstabelle
+  const header = ['Pl.', 'Name', 'Sp', 'S', 'U', 'N', 'T', 'Gg', 'Diff', 'Pkt']
+  const tableRows = rows.map((r, i) => [
+    i + 1, players[r.i], r.sp, r.s, r.u, r.n, r.tore, r.gegen, r.tore - r.gegen, r.pkt
+  ])
+
+  // Torschützen
+  const torRows = calcTorschuetzenUpTo(schedule, results, players, latest)
+  const torHeader = ['Pl.', 'Name', 'Spiele', 'Tore', 'Ø/Spiel']
+  const torData = torRows.map((r, i) => [i + 1, r.name, r.sp, r.tore, r.avg.toFixed(2)])
+
+  // Alle Ergebnisse
+  const matchHeader = ['Spieltag', 'Maschine', 'Heim', 'Auswärts', 'Heim-Tore', 'Ausw-Tore']
+  const matchData = []
+  schedule.forEach((st, si) => {
+    st.forEach(m => {
+      const r = results[gameId(m.home, m.away)]
+      if (r) matchData.push([si + 1, m.machine + 1, players[m.home], players[m.away], r.home, r.away])
+    })
+  })
+
+  // CSV zusammenbauen
+  function toCSV(headers, data) {
+    return [headers, ...data].map(row => row.map(v => `"${v}"`).join(',')).join('\n')
+  }
+
+  const csv = [
+    `WM ${jahr} - Abschlusstabelle`,
+    toCSV(header, tableRows),
+    '',
+    `WM ${jahr} - Torschützen`,
+    toCSV(torHeader, torData),
+    '',
+    `WM ${jahr} - Alle Ergebnisse`,
+    toCSV(matchHeader, matchData),
+  ].join('\n')
+
+  // Download
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `trommelwm_${jahr}_ergebnisse.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// ─── Turnier abschließen ──────────────────────────────────────────────────────
+async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
+  if (!confirm('Turnier wirklich abschließen? Die Ergebnisse werden ins Archiv übertragen.')) return
+  setSaving(true)
+
+  const latest = schedule.length - 1
+  const tabelle = calcTableUpTo(schedule, results, latest)
+  const torschuetzen = calcTorschuetzenUpTo(schedule, results, players, latest)
+  const koenig = torschuetzen[0]
+  const sieger = tabelle[0]
+  const jahr = 2026
+
+  // 1. Abschlusstabelle speichern
+  const abschlussRows = tabelle.map((r, i) => ({
+    jahr,
+    pl: i + 1,
+    name: players[r.i],
+    sp: r.sp, s: r.s, u: r.u, n: r.n,
+    t: r.tore, gg: r.gegen,
+    diff: r.tore - r.gegen,
+    pkt: r.pkt,
+  }))
+  await supabase.from('abschlusstabellen').delete().eq('jahr', jahr)
+  await supabase.from('abschlusstabellen').insert(abschlussRows)
+
+  // 2. WM-Event speichern
+  await supabase.from('wm_events').delete().eq('jahr', jahr)
+  await supabase.from('wm_events').insert({
+    jahr,
+    sieger: players[sieger.i],
+    titel: 1,
+    ort: 'WM 2026',
+    datum: '06.06.2026',
+    teilnehmer: players.length,
+    torschuetzenkoenig: koenigText || '–',
+    tore: koenig?.tore || 0,
+    punkte: sieger?.pkt || 0,
+    spiele: Object.keys(results).length,
+  })
+
+  // 3. Ewige Tabelle aktualisieren
+  for (const r of tabelle) {
+    const name = players[r.i]
+    const { data: existing } = await supabase.from('ewige_tabelle').select('*').eq('name', name).single()
+    if (existing) {
+      await supabase.from('ewige_tabelle').update({
+        sp: existing.sp + r.sp,
+        s: existing.s + r.s,
+        u: existing.u + r.u,
+        n: existing.n + r.n,
+        t: existing.t + r.tore,
+        gg: existing.gg + r.gegen,
+        diff: (existing.t + r.tore) - (existing.gg + r.gegen),
+        pkt: existing.pkt + r.pkt,
+      }).eq('name', name)
+    } else {
+      const count = await supabase.from('ewige_tabelle').select('id', { count: 'exact', head: true })
+      await supabase.from('ewige_tabelle').insert({
+        pl: (count.count || 0) + 1,
+        name,
+        sp: r.sp, s: r.s, u: r.u, n: r.n,
+        t: r.tore, gg: r.gegen,
+        diff: r.tore - r.gegen,
+        pkt: r.pkt,
+      })
+    }
+  }
+
+  // 4. Ewige Tabelle neu ranken
+  const { data: alleTabelle } = await supabase.from('ewige_tabelle').select('*')
+  if (alleTabelle) {
+    alleTabelle.sort((a, b) => b.pkt !== a.pkt ? b.pkt - a.pkt : b.diff !== a.diff ? b.diff - a.diff : b.t - a.t)
+    for (let i = 0; i < alleTabelle.length; i++) {
+      await supabase.from('ewige_tabelle').update({ pl: i + 1 }).eq('id', alleTabelle[i].id)
+    }
+  }
+
+  // 5. Weltrangliste aktualisieren – Punkte vom aktuellen Tabellenstand
+  const punkteSchema = { 1: 100, 2: 80, 3: 70, 4: 60, 5: 50, 6: 40, 7: 35, 8: 30, 9: 25, 10: 20 }
+  for (let i = 0; i < tabelle.length; i++) {
+    const name = players[tabelle[i].i]
+    const punkte = punkteSchema[i + 1] || Math.max(1, 15 - i)
+    const { data: existing } = await supabase.from('weltrangliste').select('*').eq('name', name).single()
+    if (existing) {
+      const neuePunkte = { ...existing.punkte, [`wm${jahr}`]: punkte }
+      const total = Object.values(neuePunkte).reduce((s, v) => s + v, 0)
+      await supabase.from('weltrangliste').update({ punkte: neuePunkte, total }).eq('name', name)
+    } else {
+      const count = await supabase.from('weltrangliste').select('id', { count: 'exact', head: true })
+      await supabase.from('weltrangliste').insert({
+        pl: (count.count || 0) + 1,
+        name,
+        punkte: { [`wm${jahr}`]: punkte },
+        total: punkte,
+      })
+    }
+  }
+
+  // 6. Weltrangliste neu ranken
+  const { data: alleRangliste } = await supabase.from('weltrangliste').select('*')
+  if (alleRangliste) {
+    alleRangliste.sort((a, b) => b.total - a.total)
+    for (let i = 0; i < alleRangliste.length; i++) {
+      await supabase.from('weltrangliste').update({ pl: i + 1 }).eq('id', alleRangliste[i].id)
+    }
+  }
+
+  setSaving(false)
+  setSaveMsg('✓ Turnier abgeschlossen & archiviert!')
+  setTimeout(() => setSaveMsg(''), 4000)
 }
 
 export default function Admin() {
@@ -62,7 +216,6 @@ export default function Admin() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
         if (payload.eventType === 'DELETE') {
           setResults(prev => { const n = { ...prev }; delete n[payload.old.game_id]; return n })
-          // Score-Input zurücksetzen
           setScoreInputs(prev => { const n = { ...prev }; delete n[payload.old.game_id]; return n })
         } else {
           const r = payload.new
@@ -145,7 +298,6 @@ export default function Admin() {
   async function deleteResult(home, away) {
     const gid = gameId(home, away)
     await supabase.from('results').delete().eq('game_id', gid)
-    // Sofort lokal updaten
     setResults(prev => { const n = { ...prev }; delete n[gid]; return n })
     setScoreInputs(prev => { const n = { ...prev }; delete n[gid]; return n })
   }
@@ -175,6 +327,10 @@ export default function Admin() {
   const schedule = tournament?.schedule || []
   const players = tournament?.players || []
   const currentMatches = schedule[spieltag] || []
+  const totalPlayed = Object.keys(results).length
+  const totalGames = schedule.reduce((s, st) => s + st.length, 0)
+  // Bei ungerader Spielerzahl gibt es Freilos-Runden – totalGames zählt nur echte Spiele
+  const allDone = totalGames > 0 && totalPlayed >= totalGames
 
   return (
     <div style={{ minHeight: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr', background: 'var(--gruen)' }}>
@@ -201,7 +357,6 @@ export default function Admin() {
       </div>
 
       {!tournament?.started ? (
-        /* ── Turnier einrichten ── */
         <div className="admin-body">
           <div className="section-label-admin">Turnier einrichten</div>
           <div className="setting-row"><label>Maschinen</label>
@@ -229,7 +384,6 @@ export default function Admin() {
           </>}
         </div>
       ) : (
-        /* ── Turnier läuft ── */
         <div className="admin-main">
           {/* Ergebnisse */}
           <div className="admin-left">
@@ -237,10 +391,10 @@ export default function Admin() {
               <select className="kicker-st-select" value={spieltag} onChange={e => changeSpieltag(parseInt(e.target.value))}>
                 {schedule.map((st, i) => {
                   const done = st.every(m => results[gameId(m.home, m.away)])
-                  return <option key={i} value={i}>Spieltag {i + 1}{done ? ' ·' : ''}</option>
+                  return <option key={i} value={i}>Spieltag {i + 1}{done ? ' ✓' : ''}</option>
                 })}
               </select>
-              <span className="kicker-st-info">{currentMatches.length} Paarungen</span>
+              <span className="kicker-st-info">{currentMatches.length} Paarungen · {totalPlayed}/{totalGames} gespielt</span>
             </div>
 
             <div className="kicker-matches">
@@ -271,7 +425,6 @@ export default function Admin() {
                     const aVal = scoreInputs[gid]?.away ?? r?.away ?? 0
                     return (
                       <div key={`${ri}-${idx}`} className={`kicker-match ${status}`} style={{ flexDirection: 'column', height: 'auto', padding: '12px 16px', gap: 8 }}>
-                        {/* Zeile 1: M-Label + Namen + Score */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
                           <span className="kicker-m-label">M{m.machine + 1}</span>
                           <div className="kicker-home" style={{ fontSize: 16 }}>{players[m.home]}</div>
@@ -282,7 +435,6 @@ export default function Admin() {
                           </div>
                           <div className="kicker-away" style={{ fontSize: 16 }}>{players[m.away]}</div>
                         </div>
-                        {/* Zeile 2: Buttons – nur wenn active oder done */}
                         {status !== 'pending' && (
                           <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
                             <button className="admin-btn-confirm" onClick={() => confirmResult(m.home, m.away, hVal, aVal)}>
@@ -303,7 +455,7 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Namen */}
+          {/* Rechte Spalte */}
           <div className="admin-right">
             <div className="section-label-admin">Trommler</div>
             {!editMode ? (
@@ -333,7 +485,40 @@ export default function Admin() {
                 <button className="btn-apply" onClick={() => { setEditMode(false); setEditNames([...players]) }}>Abbrechen</button>
               </>
             )}
+
             <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
+
+            {/* Export & Abschließen */}
+            <div className="section-label-admin">Turnier-Aktionen</div>
+
+            {saveMsg && !editMode && (
+              <div style={{ color: '#4ade80', fontSize: 13, marginBottom: 12, padding: '8px 12px', background: 'rgba(74,222,128,.1)', borderRadius: 6 }}>
+                {saveMsg}
+              </div>
+            )}
+
+            <button
+              className="btn-apply"
+              onClick={() => exportExcel(players, schedule, results)}
+              style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+              📥 CSV-Export (Excel)
+            </button>
+
+            <button
+              className="btn-start"
+              onClick={() => abschliessen(players, schedule, results, setSaving, setSaveMsg)}
+              disabled={saving}
+              style={{
+                marginBottom: 8,
+                background: allDone ? '#4ade80' : 'rgba(255,200,50,.6)',
+                color: 'var(--gruen)',
+                cursor: saving ? 'not-allowed' : 'pointer',
+              }}>
+              {saving ? 'Wird archiviert…' : allDone ? '✓ Turnier abschließen' : `Turnier abschließen (${totalGames - totalPlayed} noch offen)`}
+            </button>
+
+            <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
+
             <button className="btn-reset" onClick={resetTournament}>Neu einrichten</button>
           </div>
         </div>
