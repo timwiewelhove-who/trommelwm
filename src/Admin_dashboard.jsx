@@ -109,7 +109,7 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
     ort: 'WM 2026',
     datum: '06.06.2026',
     teilnehmer: players.length,
-    torschuetzenkoenig: koenig?.name || '–',
+    torschuetzenkoenig: koenigText || '–',
     tore: koenig?.tore || 0,
     punkte: sieger?.pkt || 0,
     spiele: Object.keys(results).length,
@@ -152,7 +152,7 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
     }
   }
 
-  // 5. Weltrangliste aktualisieren (Punkte nach Platzierung)
+  // 5. Weltrangliste aktualisieren – Punkte vom aktuellen Tabellenstand
   const punkteSchema = { 1: 100, 2: 80, 3: 70, 4: 60, 5: 50, 6: 40, 7: 35, 8: 30, 9: 25, 10: 20 }
   for (let i = 0; i < tabelle.length; i++) {
     const name = players[tabelle[i].i]
@@ -329,6 +329,7 @@ export default function Admin() {
   const currentMatches = schedule[spieltag] || []
   const totalPlayed = Object.keys(results).length
   const totalGames = schedule.reduce((s, st) => s + st.length, 0)
+  // Bei ungerader Spielerzahl gibt es Freilos-Runden – totalGames zählt nur echte Spiele
   const allDone = totalGames > 0 && totalPlayed >= totalGames
 
   return (
@@ -506,14 +507,14 @@ export default function Admin() {
             <button
               className="btn-start"
               onClick={() => abschliessen(players, schedule, results, setSaving, setSaveMsg)}
-              disabled={saving || !allDone}
+              disabled={saving}
               style={{
                 marginBottom: 8,
-                background: allDone ? '#4ade80' : 'rgba(74,222,128,.2)',
-                color: allDone ? 'var(--gruen)' : 'rgba(255,255,255,.3)',
-                cursor: allDone ? 'pointer' : 'not-allowed',
+                background: allDone ? '#4ade80' : 'rgba(255,200,50,.6)',
+                color: 'var(--gruen)',
+                cursor: saving ? 'not-allowed' : 'pointer',
               }}>
-              {saving ? 'Wird archiviert…' : allDone ? '✓ Turnier abschließen' : `Turnier abschließen (${totalGames - totalPlayed} offen)`}
+              {saving ? 'Wird archiviert…' : allDone ? '✓ Turnier abschließen' : `Turnier abschließen (${totalGames - totalPlayed} noch offen)`}
             </button>
 
             <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
