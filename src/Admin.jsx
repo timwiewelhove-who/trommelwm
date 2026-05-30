@@ -71,8 +71,7 @@ function exportSQL(players, schedule, results, jahr = 2026) {
   })
   if (matchVals.length) {
     lines.push(`insert into matches_archive (jahr, spieltag, maschine, home, away, home_tore, away_tore) values`)
-    lines.push(matchVals.join(',
-') + ';')
+    lines.push(matchVals.join(',\n') + ';')
   }
   lines.push('')
 
