@@ -82,8 +82,7 @@ function exportSQL(players, schedule, results, jahr = 2026) {
     lines.push(`update ewige_tabelle set sp=sp+${r.sp}, s=s+${r.s}, u=u+${r.u}, n=n+${r.n}, t=t+${r.tore}, gg=gg+${r.gegen}, diff=t-gg, pkt=pkt+${r.pkt} where name='${name}';`)
   })
 
-  const blob = new Blob([lines.join('
-')], { type: 'text/plain;charset=utf-8;' })
+  const blob = new Blob([lines.join('\\n')], { type: 'text/plain;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
