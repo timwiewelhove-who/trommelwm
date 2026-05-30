@@ -54,8 +54,7 @@ function exportSQL(players, schedule, results, jahr = 2026) {
   const tabRows = rows.map((r, i) =>
     `  (${jahr}, ${i+1}, '${esc(players[r.i])}', ${r.sp}, ${r.s}, ${r.u}, ${r.n}, ${r.tore}, ${r.gegen}, ${r.tore-r.gegen}, ${r.pkt})`
   )
-  lines.push(tabRows.join(',
-') + ';')
+  lines.push(tabRows.join(',\n') + ';')
   lines.push('')
 
   // Alle Matches
