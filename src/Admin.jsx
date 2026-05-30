@@ -152,6 +152,8 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
   const tabelle = calcTableUpTo(schedule, results, latest)
   const torschuetzen = calcTorschuetzenUpTo(schedule, results, players, latest)
   const koenig = torschuetzen[0]
+  const maxToreA = koenig?.tore || 0
+  const koenigText = torschuetzen.filter(t => t.tore === maxToreA && maxToreA > 0).map(t => t.name).join(' & ')
   const sieger = tabelle[0]
   const jahr = 2026
 
