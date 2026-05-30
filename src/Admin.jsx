@@ -622,24 +622,22 @@ export default function Admin() {
 
             {/* Snapshot */}
             <div style={{ marginBottom: 12 }}>
-              <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
-                <input
-                  type="text"
-                  placeholder="Snapshot-Name (z.B. vor Test)"
-                  value={snapshotLabel}
-                  onChange={e => setSnapshotLabel(e.target.value)}
-                  style={{ flex: 1, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13 }}
-                />
-                <button
-                  className="btn-apply"
-                  style={{ whiteSpace: 'nowrap', padding: '7px 12px' }}
-                  onClick={() => {
-                    if (!snapshotLabel.trim()) { setSaveMsg('Bitte Namen eingeben'); setTimeout(() => setSaveMsg(''), 2000); return }
-                    createSnapshot(snapshotLabel.trim(), setSaving, setSaveMsg).then(() => { setSnapshotLabel(''); loadSnapshots() })
-                  }}>
-                  💾 Snapshot
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder="Snapshot-Name (z.B. vor Test)"
+                value={snapshotLabel}
+                onChange={e => setSnapshotLabel(e.target.value)}
+                style={{ width: '100%', marginBottom: 6, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, boxSizing: 'border-box' }}
+              />
+              <button
+                className="btn-apply"
+                style={{ width: '100%', marginBottom: 6 }}
+                onClick={() => {
+                  if (!snapshotLabel.trim()) { setSaveMsg('Bitte Namen eingeben'); setTimeout(() => setSaveMsg(''), 2000); return }
+                  createSnapshot(snapshotLabel.trim(), setSaving, setSaveMsg).then(() => { setSnapshotLabel(''); loadSnapshots() })
+                }}>
+                💾 Snapshot erstellen
+              </button>
               {snapshots.length > 0 && (
                 <button
                   className="btn-apply"
