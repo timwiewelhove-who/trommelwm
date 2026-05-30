@@ -23,6 +23,77 @@ function ScoreInput({ value, onChange }) {
 }
 
 // ─── Excel-Export ─────────────────────────────────────────────────────────────
+
+function exportSQL(players, schedule, results, jahr = 2026) {
+  const latest = schedule.length - 1
+  const rows = calcTableUpTo(schedule, results, latest)
+  const torRows = calcTorschuetzenUpTo(schedule, results, players, latest)
+
+  function esc(s) { return String(s).replace(/'/g, "''") }
+
+  const lines = []
+  lines.push(`-- WM ${jahr} Export – generiert am ${new Date().toLocaleString('de-DE')}`)
+  lines.push(`-- ────────────────────────────────────────────────────`)
+  lines.push('')
+
+  // wm_events
+  const maxTore = torRows[0]?.tore || 0
+  const koenige = torRows.filter(t => t.tore === maxTore && maxTore > 0).map(t => t.name).join(' & ')
+  const sieger = players[rows[0]?.i] || '–'
+  const gespielt = Object.keys(results).length
+  lines.push(`-- WM Event`)
+  lines.push(`delete from wm_events where jahr = ${jahr};`)
+  lines.push(`insert into wm_events (jahr, sieger, titel, ort, datum, teilnehmer, torschuetzenkoenig, tore, punkte, spiele)`)
+  lines.push(`values (${jahr}, '${esc(sieger)}', 1, 'Loony Park · Bettingbühren', '06.06.${jahr}', ${players.length}, '${esc(koenige)}', ${maxTore}, ${rows[0]?.pkt || 0}, ${gespielt});`)
+  lines.push('')
+
+  // abschlusstabellen
+  lines.push(`-- Abschlusstabelle`)
+  lines.push(`delete from abschlusstabellen where jahr = ${jahr};`)
+  lines.push(`insert into abschlusstabellen (jahr, pl, name, sp, s, u, n, t, gg, diff, pkt) values`)
+  const tabRows = rows.map((r, i) =>
+    `  (${jahr}, ${i+1}, '${esc(players[r.i])}', ${r.sp}, ${r.s}, ${r.u}, ${r.n}, ${r.tore}, ${r.gegen}, ${r.tore-r.gegen}, ${r.pkt})`
+  )
+  lines.push(tabRows.join(',
+') + ';')
+  lines.push('')
+
+  // Alle Matches
+  lines.push(`-- Einzelergebnisse (matches_archive)`)
+  lines.push(`-- Tabelle anlegen falls nicht vorhanden:`)
+  lines.push(`-- create table if not exists matches_archive (id serial primary key, jahr int, spieltag int, maschine int, home text, away text, home_tore int, away_tore int);`)
+  lines.push(`delete from matches_archive where jahr = ${jahr};`)
+  const matchVals = []
+  schedule.forEach((st, si) => {
+    st.forEach(m => {
+      const r = results[gameId(m.home, m.away)]
+      if (r) matchVals.push(`  (${jahr}, ${si+1}, ${m.machine+1}, '${esc(players[m.home])}', '${esc(players[m.away])}', ${r.home}, ${r.away})`)
+    })
+  })
+  if (matchVals.length) {
+    lines.push(`insert into matches_archive (jahr, spieltag, maschine, home, away, home_tore, away_tore) values`)
+    lines.push(matchVals.join(',
+') + ';')
+  }
+  lines.push('')
+
+  // Ewige Tabelle Update
+  lines.push(`-- Ewige Tabelle (Hinweis: manuell prüfen vor Ausführung!)`)
+  rows.forEach(r => {
+    const name = esc(players[r.i])
+    lines.push(`update ewige_tabelle set sp=sp+${r.sp}, s=s+${r.s}, u=u+${r.u}, n=n+${r.n}, t=t+${r.tore}, gg=gg+${r.gegen}, diff=t-gg, pkt=pkt+${r.pkt} where name='${name}';`)
+  })
+
+  const blob = new Blob([lines.join('
+')], { type: 'text/plain;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `trommelwm_${jahr}_export.sql`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function exportExcel(players, schedule, results, jahr = 2026) {
   // Abschlusstabelle berechnen
   const latest = schedule.length - 1
@@ -603,12 +674,20 @@ export default function Admin() {
               </div>
             )}
 
-            <button
-              className="btn-apply"
-              onClick={() => exportExcel(players, schedule, results)}
-              style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
-              📥 CSV-Export (Excel)
-            </button>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+              <button
+                className="btn-apply"
+                onClick={() => exportExcel(players, schedule, results)}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                📥 CSV
+              </button>
+              <button
+                className="btn-apply"
+                onClick={() => exportSQL(players, schedule, results)}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                🗄️ SQL
+              </button>
+            </div>
 
             <button
               className="btn-start"
