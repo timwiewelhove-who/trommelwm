@@ -509,6 +509,34 @@ export default function Admin() {
             </div>
             <div className="info-box">{numPlayers} Schützen · {numPlayers * (numPlayers - 1)} Spiele · {(numPlayers % 2 === 0 ? numPlayers - 1 : numPlayers) * 2} Spieltage</div>
             <button className="btn-start" onClick={startTournament} disabled={saving}>{saving ? 'Wird gespeichert…' : 'Turnier starten'}</button>
+            <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
+            <div className="section-label-admin">Archiv-Snapshot</div>
+            <input type="text" placeholder="Snapshot-Name (z.B. vor WM 2026)" value={snapshotLabel} onChange={e => setSnapshotLabel(e.target.value)}
+              style={{ width: '100%', marginBottom: 6, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, boxSizing: 'border-box' }} />
+            <button className="btn-apply" style={{ width: '100%', marginBottom: 6 }}
+              onClick={() => { if (!snapshotLabel.trim()) return; createSnapshot(snapshotLabel.trim(), setSaving, setSaveMsg).then(() => { setSnapshotLabel(''); loadSnapshots() }) }}>
+              💾 Snapshot erstellen
+            </button>
+            {snapshots.length > 0 && (
+              <button className="btn-apply" style={{ width: '100%', fontSize: 12 }} onClick={() => setShowSnapshots(s => !s)}>
+                {showSnapshots ? '▲' : '▼'} {snapshots.length} Snapshot{snapshots.length > 1 ? 's' : ''} verfügbar
+              </button>
+            )}
+            {showSnapshots && (
+              <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {snapshots.map(s => (
+                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', background: 'rgba(255,255,255,.04)', borderRadius: 6, border: '0.5px solid var(--gruen40)' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, color: 'var(--weiss)', fontWeight: 600 }}>{s.label}</div>
+                      <div style={{ fontSize: 11, color: 'var(--weiss40)' }}>{new Date(s.created_at).toLocaleString('de-DE')}</div>
+                    </div>
+                    <button className="btn-apply" style={{ padding: '4px 10px', fontSize: 12 }}
+                      onClick={() => restoreSnapshot(s, setSaving, setSaveMsg).then(loadSnapshots)}>↩ Restore</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {saveMsg && <div style={{ color: '#4ade80', fontSize: 13, marginTop: 8 }}>{saveMsg}</div>}
           </>}
         </div>
       ) : (
