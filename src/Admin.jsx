@@ -624,7 +624,7 @@ export default function Admin() {
             <div style={{ marginBottom: 12 }}>
               <input
                 type="text"
-                placeholder="Snapshot-Name (z.B. vor Test)"
+                placeholder="Snapshot-Name"
                 value={snapshotLabel}
                 onChange={e => setSnapshotLabel(e.target.value)}
                 style={{ width: '100%', marginBottom: 6, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, boxSizing: 'border-box' }}
