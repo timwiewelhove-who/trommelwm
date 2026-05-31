@@ -173,7 +173,7 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
       </div>
       {h2h && h2h.total > 0 && (
         <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--weiss40)', padding: '2px 16px 10px', letterSpacing: '0.02em' }}>
-          {h2h.total} Matches* · {h2h.h2hHome}S/{h2h.h2hU}U/{h2h.h2hAway}N · Tore {h2h.h2hToreHome}:{h2h.h2hToreAway}
+          Bisherige Bilanz*: {h2h.h2hHome}:{h2h.h2hAway}{h2h.h2hU > 0 ? ` (${h2h.h2hU} Remis)` : ''} · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
         </div>
       )}
     </div>
