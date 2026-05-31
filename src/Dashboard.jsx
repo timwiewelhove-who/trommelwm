@@ -160,7 +160,7 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
   const h2h = archiveMatches !== null ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
 
   return (
-    <div className={`kicker-match ${status}`} style={{ flexDirection: 'column', alignItems: 'stretch', padding: '10px 0', gap: 0 }}>
+    <div className={`kicker-match ${status}`} style={{ flexDirection: 'column', alignItems: 'stretch', padding: '10px 0 0', gap: 0, height: 'auto', minHeight: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '0 16px' }}>
         <span className="kicker-m-label">M{m.machine + 1}</span>
         <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{homeIcons}{players[m.home]}</span></div>
@@ -173,7 +173,7 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
       </div>
       {h2h && h2h.total > 0 && (
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em' }}>
-          {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+          Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
         </div>
       )}
     </div>
