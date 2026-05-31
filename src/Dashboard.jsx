@@ -313,7 +313,7 @@ export default function Dashboard() {
   }, [])
 
   async function loadData() {
-    supabase.from('matches_archive').select('home,away,home_tore,away_tore').then(({ data }) => {
+    supabase.from('matches_archive').select('home,away,home_tore,away_tore').limit(5000).then(({ data }) => {
       if (data) setArchiveMatches(data)
     })
     const { data: tData } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
