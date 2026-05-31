@@ -1,5 +1,51 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
+
+// Direktvergleich aus matches_archive + laufendem Turnier
+function calcH2H(home, away, players, schedule, results, archiveMatches) {
+  const homeName = players[home]
+  const awayName = players[away]
+  let h2hHome = 0, h2hAway = 0, h2hU = 0, h2hToreHome = 0, h2hToreAway = 0
+
+  // Historische Daten
+  archiveMatches.forEach(m => {
+    if (m.home === homeName && m.away === awayName) {
+      h2hToreHome += m.home_tore; h2hToreAway += m.away_tore
+      if (m.home_tore > m.away_tore) h2hHome++
+      else if (m.home_tore < m.away_tore) h2hAway++
+      else h2hU++
+    } else if (m.home === awayName && m.away === homeName) {
+      h2hToreHome += m.away_tore; h2hToreAway += m.home_tore
+      if (m.away_tore > m.home_tore) h2hHome++
+      else if (m.away_tore < m.home_tore) h2hAway++
+      else h2hU++
+    }
+  })
+
+  // Laufendes Turnier (Hinrunde)
+  schedule.forEach(st => st.forEach(m => {
+    if (m.home === home && m.away === away) {
+      const r = results[gameId(m.home, m.away)]
+      if (r) {
+        h2hToreHome += r.home; h2hToreAway += r.away
+        if (r.home > r.away) h2hHome++
+        else if (r.home < r.away) h2hAway++
+        else h2hU++
+      }
+    } else if (m.home === away && m.away === home) {
+      const r = results[gameId(m.home, m.away)]
+      if (r) {
+        h2hToreHome += r.away; h2hToreAway += r.home
+        if (r.away > r.home) h2hHome++
+        else if (r.away < r.home) h2hAway++
+        else h2hU++
+      }
+    }
+  }))
+
+  const total = h2hHome + h2hAway + h2hU
+  return { total, h2hHome, h2hAway, h2hU, h2hToreHome, h2hToreAway }
+}
 import { gameId, calcTableUpTo, calcTorschuetzenUpTo } from './logic'
 import './styles.css'
 
@@ -87,7 +133,7 @@ function TorschuetzenMobile({ schedule, results, players, upTo }) {
   )
 }
 
-function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, mobile }) {
+function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, mobile, schedule, archiveMatches }) {
   const r = results[gameId(m.home, m.away)]
   const homeIcons = <>
     {tableLeaderIdx === m.home && <span style={{ marginRight: 3 }}>🏆</span>}
@@ -111,21 +157,30 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
     )
   }
 
+  const h2h = archiveMatches ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
+
   return (
-    <div className={`kicker-match ${status}`}>
-      <span className="kicker-m-label">M{m.machine + 1}</span>
-      <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{homeIcons}{players[m.home]}</span></div>
-      <div className="kicker-score">
-        {status === 'done'
-          ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
-          : <span className="kicker-score-pending">– : –</span>}
+    <div className={`kicker-match ${status}`} style={{ flexDirection: 'column', alignItems: 'stretch', padding: '10px 0', gap: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '0 16px' }}>
+        <span className="kicker-m-label">M{m.machine + 1}</span>
+        <div className="kicker-home"><span style={{ whiteSpace: 'nowrap' }}>{homeIcons}{players[m.home]}</span></div>
+        <div className="kicker-score">
+          {status === 'done'
+            ? <><span className="kicker-score-num">{r.home}</span><span className="kicker-score-sep">:</span><span className="kicker-score-num">{r.away}</span></>
+            : <span className="kicker-score-pending">– : –</span>}
+        </div>
+        <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{awayIcons}{players[m.away]}</span></div>
       </div>
-      <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{awayIcons}{players[m.away]}</span></div>
+      {h2h && h2h.total > 0 && (
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '4px 16px 6px', letterSpacing: '0.03em' }}>
+          {h2h.total}× · {players[m.home].split(' ')[1] || players[m.home]} {h2h.h2hHome}:{h2h.h2hU}:{h2h.h2hAway} {players[m.away].split(' ')[1] || players[m.away]} · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+        </div>
+      )}
     </div>
   )
 }
 
-function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx = new Set(), tableLeaderIdx = -1, mobile = false }) {
+function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx = new Set(), tableLeaderIdx = -1, mobile = false, archiveMatches = [] }) {
   const doneSet = new Set(schedule.map((st, i) => st.every(m => results[gameId(m.home, m.away)]) ? i : -1).filter(i => i >= 0))
   const st = schedule[spieltag] || []
   const numM = schedule[0] ? Math.max(...schedule[0].map(m => m.machine)) + 1 : 6
@@ -172,7 +227,7 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLe
           </div>] : []),
           ...round.map((m, idx) => {
             const status = getMatchStatus(m, st, results)
-            return <MatchRow key={`${ri}-${idx}`} m={m} players={players} results={results} status={status} torLeaderIdx={torLeaderIdx} tableLeaderIdx={tableLeaderIdx} mobile={mobile} />
+            return <MatchRow key={`${ri}-${idx}`} m={m} players={players} results={results} status={status} torLeaderIdx={torLeaderIdx} tableLeaderIdx={tableLeaderIdx} mobile={mobile} schedule={schedule} archiveMatches={archiveMatches} />
           })
         ])}
       </div>
@@ -229,6 +284,7 @@ function MobileView({ schedule, results, players }) {
 
 export default function Dashboard() {
   const [tournament, setTournament] = useState(null)
+  const [archiveMatches, setArchiveMatches] = useState([])
   const [results, setResults] = useState({})
   const [loading, setLoading] = useState(true)
   const [spieltag, setSpieltag] = useState(0)
@@ -242,6 +298,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadData()
+    supabase.from('matches_archive').select('home,away,home_tore,away_tore').then(({ data }) => {
+      if (data) setArchiveMatches(data)
+    })
     const sub = supabase.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, () => loadData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
