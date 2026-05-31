@@ -20,8 +20,11 @@ export function buildRoundRobin(N, firstPlayerId = 0) {
       if (a < N && b < N) round.push({ home: a, away: b })
     }
     // Erste Runde: firstPlayerId spielt immer als Heim (home)
-    if (r === 0 && round.length > 0 && round[0].home !== firstPlayerId) {
-      round[0] = { home: round[0].away, away: round[0].home }
+    if (r === 0) {
+      const idx = round.findIndex(m => m.home === firstPlayerId || m.away === firstPlayerId)
+      if (idx >= 0 && round[idx].away === firstPlayerId) {
+        round[idx] = { home: round[idx].away, away: round[idx].home }
+      }
     }
     rounds.push(round)
     rotating.unshift(rotating.pop())
