@@ -298,9 +298,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadData()
-    supabase.from('matches_archive').select('home,away,home_tore,away_tore').then(({ data }) => {
-      if (data) setArchiveMatches(data)
-    })
     const sub = supabase.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, () => loadData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
@@ -316,6 +313,9 @@ export default function Dashboard() {
   }, [])
 
   async function loadData() {
+    supabase.from('matches_archive').select('home,away,home_tore,away_tore').then(({ data }) => {
+      if (data) setArchiveMatches(data)
+    })
     const { data: tData } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
     if (tData?.length > 0) {
       const t = tData[0]
