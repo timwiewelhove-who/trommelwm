@@ -265,7 +265,7 @@ function MobileView({ schedule, results, players }) {
       </div>
       <div className="mobile-content">
         {tab === 'spieltage' && (
-          <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeader} mobile={true} />
+          <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={setSpieltag} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeader} mobile={true} archiveMatches={archiveMatches} />
         )}
         {tab === 'tabelle' && (
           <div style={{ padding: '12px 16px' }}>
@@ -392,7 +392,7 @@ export default function Dashboard() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr' }}>
           <div style={{ padding: '24px 48px', borderRight: '0.5px solid var(--gruen40)' }}>
-            <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={s => { setManualOverride(true); setSpieltag(s) }} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeaderD} />
+            <SpieltagView schedule={schedule} results={results} players={players} spieltag={spieltag} setSpieltag={s => { setManualOverride(true); setSpieltag(s) }} torLeaderIdx={leaderSet} tableLeaderIdx={tableLeaderD} archiveMatches={archiveMatches} />
           </div>
           <div style={{ padding: '20px 24px' }}>
             <div className="section-label">Tabelle</div>
