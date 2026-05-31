@@ -235,7 +235,7 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLe
   )
 }
 
-function MobileView({ schedule, results, players }) {
+function MobileView({ schedule, results, players, archiveMatches = [] }) {
   const [spieltag, setSpieltag] = useState(() => {
     for (let i = schedule.length - 1; i >= 0; i--)
       if (schedule[i].some(m => results[gameId(m.home, m.away)])) return i
@@ -372,7 +372,7 @@ export default function Dashboard() {
             <div className="mobile-header-clock">{clock}</div>
           </div>
         </div>
-        <MobileView schedule={schedule} results={results} players={players} />
+        <MobileView schedule={schedule} results={results} players={players} archiveMatches={archiveMatches} />
       </div>
 
       <div className="desktop-only" style={{ minHeight: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr auto' }}>
