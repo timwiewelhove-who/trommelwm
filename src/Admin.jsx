@@ -1,3 +1,4 @@
+Fixed: True
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { buildSchedule, gameId, calcTableUpTo, calcTorschuetzenUpTo } from './logic'
@@ -71,7 +72,8 @@ function exportSQL(players, schedule, results, jahr = 2026) {
   })
   if (matchVals.length) {
     lines.push(`insert into matches_archive (jahr, spieltag, maschine, home, away, home_tore, away_tore) values`)
-    lines.push(matchVals.join(',\n') + ';')
+    lines.push(matchVals.join(',
+') + ';')
   }
   lines.push('')
 
@@ -82,7 +84,8 @@ function exportSQL(players, schedule, results, jahr = 2026) {
     lines.push(`update ewige_tabelle set sp=sp+${r.sp}, s=s+${r.s}, u=u+${r.u}, n=n+${r.n}, t=t+${r.tore}, gg=gg+${r.gegen}, diff=t-gg, pkt=pkt+${r.pkt} where name='${name}';`)
   })
 
-  const blob = new Blob([lines.join('\\n')], { type: 'text/plain;charset=utf-8;' })
+  const blob = new Blob([lines.join('
+')], { type: 'text/plain;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -92,48 +95,90 @@ function exportSQL(players, schedule, results, jahr = 2026) {
 }
 
 function exportExcel(players, schedule, results, jahr = 2026) {
-  // Abschlusstabelle berechnen
   const latest = schedule.length - 1
   const rows = calcTableUpTo(schedule, results, latest)
-
-  // CSV-Inhalt Abschlusstabelle
-  const header = ['Pl.', 'Name', 'Sp', 'S', 'U', 'N', 'T', 'Gg', 'Diff', 'Pkt']
-  const tableRows = rows.map((r, i) => [
-    i + 1, players[r.i], r.sp, r.s, r.u, r.n, r.tore, r.gegen, r.tore - r.gegen, r.pkt
-  ])
-
-  // Torschützen
   const torRows = calcTorschuetzenUpTo(schedule, results, players, latest)
-  const torHeader = ['Pl.', 'Name', 'Spiele', 'Tore', 'Ø/Spiel']
-  const torData = torRows.map((r, i) => [i + 1, r.name, r.sp, r.tore, r.avg.toFixed(2)])
 
-  // Alle Ergebnisse
-  const matchHeader = ['Spieltag', 'Maschine', 'Heim', 'Auswärts', 'Heim-Tore', 'Ausw-Tore']
-  const matchData = []
-  schedule.forEach((st, si) => {
-    st.forEach(m => {
-      const r = results[gameId(m.home, m.away)]
-      if (r) matchData.push([si + 1, m.machine + 1, players[m.home], players[m.away], r.home, r.away])
-    })
-  })
+  // Hilfsfunktion: Punktzahl berechnen
+  function getPkt(playerIdx) {
+    const r = rows.find(r => r.i === playerIdx)
+    return r ? r.pkt : 0
+  }
+  function getPlatz(playerIdx) {
+    const idx = rows.findIndex(r => r.i === playerIdx)
+    return idx >= 0 ? idx + 1 : ''
+  }
 
-  // CSV zusammenbauen
   function toCSV(headers, data) {
     return [headers, ...data].map(row => row.map(v => `"${v}"`).join(',')).join('\n')
   }
 
+  // ── 1. Abschlusstabelle ──────────────────────────────────────────────────
+  const tabHeader = ['Pl.', 'Name', 'Sp', 'S', 'U', 'N', 'T', 'Gg', 'Diff', 'Pkt']
+  const tabData = rows.map((r, i) => [
+    i + 1, players[r.i], r.sp, r.s, r.u, r.n, r.tore, r.gegen, r.tore - r.gegen, r.pkt
+  ])
+
+  // ── 2. Torschützen ───────────────────────────────────────────────────────
+  const torHeader = ['Pl.', 'Name', 'Spiele', 'Tore', 'Ø/Spiel']
+  const torData = torRows.map((r, i) => [i + 1, r.name, r.sp, r.tore, r.avg.toFixed(2)])
+
+  // ── 3. Alle Spiele – Hin & Rückrunde nebeneinander (wie PDF-Format) ──────
+  // Hin = erste Hälfte der Spieltage, Rück = zweite Hälfte
+  const half = Math.floor(schedule.length / 2)
+  const hinRunde = schedule.slice(0, half)
+  const rueckRunde = schedule.slice(half)
+
+  const spieleHeader = [
+    'Spieltag', 'Heim', 'Gast', 'H', 'G', 'Pkt H', 'Pkt G', 'Platz H', 'Platz G',
+    '', // Trenner
+    'Spieltag', 'Heim', 'Gast', 'H', 'G', 'Pkt H', 'Pkt G', 'Platz H', 'Platz G'
+  ]
+
+  const spieleData = []
+  const maxLen = Math.max(hinRunde.reduce((s, st) => s + st.length, 0),
+                          rueckRunde.reduce((s, st) => s + st.length, 0))
+
+  // Flatten alle Hin-Spiele und Rück-Spiele
+  const hinSpiele = []
+  hinRunde.forEach((st, si) => st.forEach(m => {
+    const r = results[gameId(m.home, m.away)]
+    if (r) {
+      const hPkt = r.home > r.away ? 3 : r.home === r.away ? 1 : 0
+      const aPkt = r.away > r.home ? 3 : r.home === r.away ? 1 : 0
+      hinSpiele.push([si + 1, players[m.home], players[m.away], r.home, r.away, hPkt, aPkt, getPlatz(m.home), getPlatz(m.away)])
+    }
+  }))
+
+  const rueckSpiele = []
+  rueckRunde.forEach((st, si) => st.forEach(m => {
+    const r = results[gameId(m.home, m.away)]
+    if (r) {
+      const hPkt = r.home > r.away ? 3 : r.home === r.away ? 1 : 0
+      const aPkt = r.away > r.home ? 3 : r.home === r.away ? 1 : 0
+      rueckSpiele.push([half + si + 1, players[m.home], players[m.away], r.home, r.away, hPkt, aPkt, getPlatz(m.home), getPlatz(m.away)])
+    }
+  }))
+
+  const numRows = Math.max(hinSpiele.length, rueckSpiele.length)
+  for (let i = 0; i < numRows; i++) {
+    const hin = hinSpiele[i] || ['', '', '', '', '', '', '', '', '']
+    const rueck = rueckSpiele[i] || ['', '', '', '', '', '', '', '', '']
+    spieleData.push([...hin, '', ...rueck])
+  }
+
+  // ── Zusammenbauen ────────────────────────────────────────────────────────
   const csv = [
-    `WM ${jahr} - Abschlusstabelle`,
-    toCSV(header, tableRows),
+    `WM ${jahr} – Abschlusstabelle`,
+    toCSV(tabHeader, tabData),
     '',
-    `WM ${jahr} - Torschützen`,
+    `WM ${jahr} – Torschützen`,
     toCSV(torHeader, torData),
     '',
-    `WM ${jahr} - Alle Ergebnisse`,
-    toCSV(matchHeader, matchData),
+    `WM ${jahr} – Alle Spiele (Hinrunde | Rückrunde)`,
+    toCSV(spieleHeader, spieleData),
   ].join('\n')
 
-  // Download
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -152,8 +197,6 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
   const tabelle = calcTableUpTo(schedule, results, latest)
   const torschuetzen = calcTorschuetzenUpTo(schedule, results, players, latest)
   const koenig = torschuetzen[0]
-  const maxToreA = koenig?.tore || 0
-  const koenigText = torschuetzen.filter(t => t.tore === maxToreA && maxToreA > 0).map(t => t.name).join(' & ')
   const sieger = tabelle[0]
   const jahr = 2026
 
@@ -509,34 +552,6 @@ export default function Admin() {
             </div>
             <div className="info-box">{numPlayers} Schützen · {numPlayers * (numPlayers - 1)} Spiele · {(numPlayers % 2 === 0 ? numPlayers - 1 : numPlayers) * 2} Spieltage</div>
             <button className="btn-start" onClick={startTournament} disabled={saving}>{saving ? 'Wird gespeichert…' : 'Turnier starten'}</button>
-            <div style={{ height: '0.5px', background: 'var(--gruen40)', margin: '20px 0' }} />
-            <div className="section-label-admin">Archiv-Snapshot</div>
-            <input type="text" placeholder="Snapshot-Name (z.B. vor WM 2026)" value={snapshotLabel} onChange={e => setSnapshotLabel(e.target.value)}
-              style={{ width: '100%', marginBottom: 6, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, boxSizing: 'border-box' }} />
-            <button className="btn-apply" style={{ width: '100%', marginBottom: 6 }}
-              onClick={() => { if (!snapshotLabel.trim()) return; createSnapshot(snapshotLabel.trim(), setSaving, setSaveMsg).then(() => { setSnapshotLabel(''); loadSnapshots() }) }}>
-              💾 Snapshot erstellen
-            </button>
-            {snapshots.length > 0 && (
-              <button className="btn-apply" style={{ width: '100%', fontSize: 12 }} onClick={() => setShowSnapshots(s => !s)}>
-                {showSnapshots ? '▲' : '▼'} {snapshots.length} Snapshot{snapshots.length > 1 ? 's' : ''} verfügbar
-              </button>
-            )}
-            {showSnapshots && (
-              <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {snapshots.map(s => (
-                  <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', background: 'rgba(255,255,255,.04)', borderRadius: 6, border: '0.5px solid var(--gruen40)' }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, color: 'var(--weiss)', fontWeight: 600 }}>{s.label}</div>
-                      <div style={{ fontSize: 11, color: 'var(--weiss40)' }}>{new Date(s.created_at).toLocaleString('de-DE')}</div>
-                    </div>
-                    <button className="btn-apply" style={{ padding: '4px 10px', fontSize: 12 }}
-                      onClick={() => restoreSnapshot(s, setSaving, setSaveMsg).then(loadSnapshots)}>↩ Restore</button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {saveMsg && <div style={{ color: '#4ade80', fontSize: 13, marginTop: 8 }}>{saveMsg}</div>}
           </>}
         </div>
       ) : (
@@ -651,7 +666,7 @@ export default function Admin() {
             <div style={{ marginBottom: 12 }}>
               <input
                 type="text"
-                placeholder="Snapshot-Name"
+                placeholder="Snapshot-Name (z.B. vor Test)"
                 value={snapshotLabel}
                 onChange={e => setSnapshotLabel(e.target.value)}
                 style={{ width: '100%', marginBottom: 6, padding: '7px 10px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 6, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 13, boxSizing: 'border-box' }}
