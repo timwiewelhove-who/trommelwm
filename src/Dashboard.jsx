@@ -172,8 +172,8 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
         <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{awayIcons}{players[m.away]}</span></div>
       </div>
       {h2h && h2h.total > 0 && (
-        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--weiss40)', padding: '2px 16px 14px', letterSpacing: '0.02em' }}>
-          Direktvergleich*: <strong style={{ color: 'var(--weiss60)' }}>{h2h.total} Matches</strong> · <strong style={{ color: 'var(--weiss60)' }}>{h2h.h2hHome}:{h2h.h2hAway} Siege</strong> · {h2h.h2hU} Remis · <strong style={{ color: 'var(--weiss60)' }}>{h2h.h2hToreHome}:{h2h.h2hToreAway} Tore</strong>
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em' }}>
+          {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
         </div>
       )}
     </div>
