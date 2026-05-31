@@ -157,7 +157,7 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
     )
   }
 
-  const h2h = archiveMatches ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
+  const h2h = archiveMatches !== null ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
 
   return (
     <div className={`kicker-match ${status}`} style={{ flexDirection: 'column', alignItems: 'stretch', padding: '10px 0', gap: 0 }}>
@@ -180,7 +180,7 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
   )
 }
 
-function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx = new Set(), tableLeaderIdx = -1, mobile = false, archiveMatches = [] }) {
+function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLeaderIdx = new Set(), tableLeaderIdx = -1, mobile = false, archiveMatches = null }) {
   const doneSet = new Set(schedule.map((st, i) => st.every(m => results[gameId(m.home, m.away)]) ? i : -1).filter(i => i >= 0))
   const st = schedule[spieltag] || []
   const numM = schedule[0] ? Math.max(...schedule[0].map(m => m.machine)) + 1 : 6
@@ -235,7 +235,7 @@ function SpieltagView({ schedule, results, players, spieltag, setSpieltag, torLe
   )
 }
 
-function MobileView({ schedule, results, players, archiveMatches = [] }) {
+function MobileView({ schedule, results, players, archiveMatches = null }) {
   const [spieltag, setSpieltag] = useState(() => {
     for (let i = schedule.length - 1; i >= 0; i--)
       if (schedule[i].some(m => results[gameId(m.home, m.away)])) return i
@@ -284,7 +284,7 @@ function MobileView({ schedule, results, players, archiveMatches = [] }) {
 
 export default function Dashboard() {
   const [tournament, setTournament] = useState(null)
-  const [archiveMatches, setArchiveMatches] = useState([])
+  const [archiveMatches, setArchiveMatches] = useState(null)
   const [results, setResults] = useState({})
   const [loading, setLoading] = useState(true)
   const [spieltag, setSpieltag] = useState(0)
