@@ -45,7 +45,7 @@ function exportSQL(players, schedule, results, jahr = 2026) {
   lines.push(`-- WM Event`)
   lines.push(`delete from wm_events where jahr = ${jahr};`)
   lines.push(`insert into wm_events (jahr, sieger, titel, ort, datum, teilnehmer, torschuetzenkoenig, tore, punkte, spiele)`)
-  lines.push(`values (${jahr}, '${esc(sieger)}', 1, 'Loony Park · Berne', '06.06.${jahr}', ${players.length}, '${esc(koenige)}', ${maxTore}, ${rows[0]?.pkt || 0}, ${gespielt});`)
+  lines.push(`values (${jahr}, '${esc(sieger)}', 1, 'Loony Park · Bettingbühren', '06.06.${jahr}', ${players.length}, '${esc(koenige)}', ${maxTore}, ${rows[0]?.pkt || 0}, ${gespielt});`)
   lines.push('')
 
   // abschlusstabellen
@@ -189,7 +189,7 @@ function exportExcel(players, schedule, results, jahr = 2026) {
 }
 
 // ─── Turnier abschließen ──────────────────────────────────────────────────────
-async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
+async function abschliessen(players, schedule, results, setSaving, setSaveMsg, meta = {}) {
   if (!confirm('Turnier wirklich abschließen? Die Ergebnisse werden ins Archiv übertragen.')) return
   setSaving(true)
 
@@ -198,7 +198,7 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg) {
   const torschuetzen = calcTorschuetzenUpTo(schedule, results, players, latest)
   const koenig = torschuetzen[0]
   const sieger = tabelle[0]
-  const jahr = 2026
+  const jahr = meta.jahr || new Date().getFullYear()
 
   // 1. Abschlusstabelle speichern
   const abschlussRows = tabelle.map((r, i) => ({
@@ -366,6 +366,10 @@ export default function Admin() {
   const [playerNames, setPlayerNames] = useState(Array(10).fill(''))
   const [editNames, setEditNames] = useState([])
   const [previousWinner, setPreviousWinner] = useState('')
+  const [turnierOrt, setTurnierOrt] = useState('')
+  const [turnierLocation, setTurnierLocation] = useState('')
+  const [turnierDatum, setTurnierDatum] = useState('')
+  const [turnierJahr, setTurnierJahr] = useState(new Date().getFullYear())
   const [editMode, setEditMode] = useState(false)
   const [spieltag, setSpieltag] = useState(0)
   const [scoreInputs, setScoreInputs] = useState({})
@@ -551,6 +555,23 @@ export default function Admin() {
                   <input type="text" placeholder={`Schütze ${i + 1}`} value={playerNames[i] || ''} onChange={e => setPlayerNames(n => { const a = [...n]; a[i] = e.target.value; return a })} />
                 </div>
               ))}
+            </div>
+            <div className="section-label-admin" style={{ marginTop: 16 }}>Turnier-Details</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
+              <input type="number" placeholder="Jahr (z.B. 2026)" value={turnierJahr}
+                onChange={e => setTurnierJahr(parseInt(e.target.value) || new Date().getFullYear())}
+                style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 8, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 14 }} />
+              <input type="text" placeholder="Datum (z.B. 06.06.2026)" value={turnierDatum}
+                onChange={e => setTurnierDatum(e.target.value)}
+                style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 8, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 14 }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+              <input type="text" placeholder="Ort (z.B. Berne)" value={turnierOrt}
+                onChange={e => setTurnierOrt(e.target.value)}
+                style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 8, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 14 }} />
+              <input type="text" placeholder="Location (z.B. Garten Kesehage)" value={turnierLocation}
+                onChange={e => setTurnierLocation(e.target.value)}
+                style={{ padding: '8px 12px', background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 8, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 14 }} />
             </div>
             <div className="section-label-admin" style={{ marginTop: 16 }}>Amtierender Weltmeister</div>
             <select value={previousWinner} onChange={e => setPreviousWinner(e.target.value)}
@@ -741,7 +762,7 @@ export default function Admin() {
 
             <button
               className="btn-start"
-              onClick={() => abschliessen(players, schedule, results, setSaving, setSaveMsg)}
+              onClick={() => abschliessen(players, schedule, results, setSaving, setSaveMsg, { ort: turnierOrt, location: turnierLocation, datum: turnierDatum, jahr: turnierJahr })}
               disabled={saving}
               style={{
                 marginBottom: 8,
