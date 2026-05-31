@@ -313,9 +313,23 @@ export default function Dashboard() {
   }, [])
 
   async function loadData() {
-    supabase.from('matches_archive').select('home,away,home_tore,away_tore').limit(5000).then(({ data }) => {
-      if (data) setArchiveMatches(data)
-    })
+    // Lade alle matches_archive in Batches (Supabase limit 1000/request)
+    async function loadArchive() {
+      let all = []
+      let from = 0
+      const batchSize = 1000
+      while (true) {
+        const { data } = await supabase.from('matches_archive')
+          .select('home,away,home_tore,away_tore')
+          .range(from, from + batchSize - 1)
+        if (!data || data.length === 0) break
+        all = [...all, ...data]
+        if (data.length < batchSize) break
+        from += batchSize
+      }
+      setArchiveMatches(all)
+    }
+    loadArchive()
     const { data: tData } = await supabase.from('tournament').select('*').order('created_at', { ascending: false }).limit(1)
     if (tData?.length > 0) {
       const t = tData[0]
