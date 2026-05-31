@@ -1,4 +1,4 @@
-Fixed: True
+Fixed: true
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { buildSchedule, gameId, calcTableUpTo, calcTorschuetzenUpTo } from './logic'
