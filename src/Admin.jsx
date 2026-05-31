@@ -45,7 +45,7 @@ function exportSQL(players, schedule, results, jahr = 2026) {
   lines.push(`-- WM Event`)
   lines.push(`delete from wm_events where jahr = ${jahr};`)
   lines.push(`insert into wm_events (jahr, sieger, titel, ort, datum, teilnehmer, torschuetzenkoenig, tore, punkte, spiele)`)
-  lines.push(`values (${jahr}, '${esc(sieger)}', 1, 'Loony Park · Bettingbühren', '06.06.${jahr}', ${players.length}, '${esc(koenige)}', ${maxTore}, ${rows[0]?.pkt || 0}, ${gespielt});`)
+  lines.push(`values (${jahr}, '${esc(sieger)}', 1, 'Loony Park · Berne', '06.06.${jahr}', ${players.length}, '${esc(koenige)}', ${maxTore}, ${rows[0]?.pkt || 0}, ${gespielt});`)
   lines.push('')
 
   // abschlusstabellen
