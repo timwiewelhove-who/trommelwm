@@ -29,6 +29,29 @@ export function buildRoundRobin(N, firstPlayerId = 0) {
     rounds.push(round)
     rotating.unshift(rotating.pop())
   }
+  // Sicherstellen dass firstPlayerId in Runde 1 spielt (kein Freilos)
+  const playsInRound0 = rounds[0].some(m => m.home === firstPlayerId || m.away === firstPlayerId)
+  if (!playsInRound0) {
+    // Erste Runde finden in der firstPlayerId spielt
+    const swapIdx = rounds.findIndex((r, i) => i > 0 && r.some(m => m.home === firstPlayerId || m.away === firstPlayerId))
+    if (swapIdx > 0) {
+      // Runden tauschen
+      const tmp = rounds[0]
+      rounds[0] = rounds[swapIdx]
+      rounds[swapIdx] = tmp
+    }
+  }
+  // Heimrecht in Runde 1 sicherstellen
+  const matchIdx = rounds[0].findIndex(m => m.home === firstPlayerId || m.away === firstPlayerId)
+  if (matchIdx >= 0 && rounds[0][matchIdx].away === firstPlayerId) {
+    rounds[0][matchIdx] = { home: rounds[0][matchIdx].away, away: rounds[0][matchIdx].home }
+  }
+  // Spiel nach vorne in Runde 1
+  if (matchIdx > 0) {
+    const match = rounds[0].splice(matchIdx, 1)[0]
+    rounds[0].unshift(match)
+  }
+
   return rounds
 }
 
