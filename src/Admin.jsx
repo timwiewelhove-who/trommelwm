@@ -365,6 +365,7 @@ export default function Admin() {
   const [numPlayersStr, setNumPlayersStr] = useState('10')
   const [playerNames, setPlayerNames] = useState(Array(10).fill(''))
   const [editNames, setEditNames] = useState([])
+  const [previousWinner, setPreviousWinner] = useState('')
   const [editMode, setEditMode] = useState(false)
   const [spieltag, setSpieltag] = useState(0)
   const [scoreInputs, setScoreInputs] = useState({})
@@ -426,7 +427,8 @@ export default function Admin() {
     if (numPlayers < 2 || saving) return
     setSaving(true)
     const names = Array.from({ length: numPlayers }, (_, i) => playerNames[i]?.trim() || `Schütze ${i + 1}`)
-    const schedule = buildSchedule(names, numMachines)
+    const winnerIdx = previousWinner ? names.indexOf(previousWinner) : -1
+    const schedule = buildSchedule(names, numMachines, winnerIdx >= 0 ? winnerIdx : 0)
     await supabase.from('results').delete().neq('id', '00000000-0000-0000-0000-000000000000')
     await supabase.from('tournament').delete().neq('id', '00000000-0000-0000-0000-000000000000')
     const { data } = await supabase.from('tournament').insert({ players: names, num_machines: numMachines, schedule, started: true, live_active: true }).select().single()
@@ -550,6 +552,14 @@ export default function Admin() {
                 </div>
               ))}
             </div>
+            <div className="section-label-admin" style={{ marginTop: 16 }}>Amtierender Weltmeister</div>
+            <select value={previousWinner} onChange={e => setPreviousWinner(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px', marginBottom: 12, background: 'rgba(255,255,255,.06)', border: '0.5px solid var(--gruen40)', borderRadius: 8, color: 'var(--weiss)', fontFamily: 'Nunito Sans, sans-serif', fontSize: 14 }}>
+              <option value="">– Kein / Nicht relevant –</option>
+              {Array.from({ length: numPlayers }, (_, i) => playerNames[i]?.trim() || `Schütze ${i + 1}`).map((name, i) => (
+                <option key={i} value={name}>{name}</option>
+              ))}
+            </select>
             <div className="info-box">{numPlayers} Schützen · {numPlayers * (numPlayers - 1)} Spiele · {(numPlayers % 2 === 0 ? numPlayers - 1 : numPlayers) * 2} Spieltage</div>
             <button className="btn-start" onClick={startTournament} disabled={saving}>{saving ? 'Wird gespeichert…' : 'Turnier starten'}</button>
           </>}
