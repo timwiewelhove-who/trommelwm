@@ -172,8 +172,8 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
         <div className="kicker-away"><span style={{ whiteSpace: 'nowrap' }}>{awayIcons}{players[m.away]}</span></div>
       </div>
       {h2h && h2h.total > 0 && (
-        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--weiss40)', padding: '2px 16px 10px', letterSpacing: '0.02em' }}>
-          Bisherige Bilanz*: {h2h.h2hHome}:{h2h.h2hAway}{h2h.h2hU > 0 ? ` (${h2h.h2hU} Remis)` : ''} · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+        <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--weiss40)', padding: '2px 16px 14px', letterSpacing: '0.02em' }}>
+          Bisherige Bilanz*: <strong style={{ color: 'var(--weiss60)' }}>{h2h.h2hHome}:{h2h.h2hAway}{h2h.h2hU > 0 ? ` (${h2h.h2hU} Remis)` : ''}</strong> · <strong style={{ color: 'var(--weiss60)' }}>{h2h.h2hToreHome}:{h2h.h2hToreAway} Tore</strong>
         </div>
       )}
     </div>
@@ -401,6 +401,9 @@ export default function Dashboard() {
         </div>
 
         <div className="app-footer">
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss30)', padding: '8px 24px 0', borderTop: '0.5px solid var(--gruen40)', marginBottom: 4 }}>
+          *Bisherige Bilanz basierend auf verfügbaren Daten ab WM 2014
+        </div>
           <div className="footer-txt">live.trommelschiessen.de</div>
           <div className="footer-txt">Édition Jubilaire · 2006–2026</div>
         </div>
