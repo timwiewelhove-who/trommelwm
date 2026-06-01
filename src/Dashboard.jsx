@@ -144,6 +144,8 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
     {torLeaderIdx?.has(m.away) && <span style={{ marginRight: 3 }}>👑</span>}
   </>
 
+  const h2h = archiveMatches !== null ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
+
   if (mobile) {
     return (
       <div className={`mobile-match-card ${status}`}>
@@ -153,11 +155,14 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
           <span className="mobile-match-score">{status === 'done' ? `${r.home} : ${r.away}` : '– : –'}</span>
           <span className="mobile-match-name away">{awayIcons}{players[m.away]}</span>
         </div>
+        {h2h && h2h.total > 0 && (
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.4)', padding: '2px 16px 10px', letterSpacing: '0.02em' }}>
+            Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+          </div>
+        )}
       </div>
     )
   }
-
-  const h2h = archiveMatches !== null ? calcH2H(m.home, m.away, players, schedule || [], results, archiveMatches) : null
 
   return (
     <div className={`kicker-match ${status}`} style={{ flexDirection: 'column', alignItems: 'stretch', padding: '10px 0 0', gap: 0, height: 'auto', minHeight: 0 }}>
