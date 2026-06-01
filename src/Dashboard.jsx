@@ -392,6 +392,10 @@ export default function Dashboard() {
           </div>
         </div>
         <MobileView schedule={schedule} results={results} players={players} archiveMatches={archiveMatches} />
+        <div style={{ textAlign: 'center', padding: '12px 24px 20px', borderTop: '0.5px solid var(--gruen40)', marginTop: 8 }}>
+          <div style={{ fontFamily: 'Bayon, sans-serif', fontSize: 13, color: 'var(--weiss60)', letterSpacing: '0.05em' }}>Édition Jubilaire · 2006–2026</div>
+          <div style={{ fontSize: 11, color: 'var(--weiss30)', marginTop: 4 }}>*Direktvergleiche basierend auf verfügbaren Daten ab WM 2014</div>
+        </div>
       </div>
 
       <div className="desktop-only" style={{ minHeight: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr auto' }}>
@@ -420,11 +424,8 @@ export default function Dashboard() {
         </div>
 
         <div className="app-footer">
-        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss30)', padding: '8px 24px 0', borderTop: '0.5px solid var(--gruen40)', marginBottom: 4 }}>
-          *Bisherige Bilanz basierend auf verfügbaren Daten ab WM 2014
-        </div>
-          <div className="footer-txt">live.trommelschiessen.de</div>
           <div className="footer-txt">Édition Jubilaire · 2006–2026</div>
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss30)', marginTop: 4 }}>*Direktvergleiche basierend auf verfügbaren Daten ab WM 2014</div>
         </div>
       </div>
     </>
