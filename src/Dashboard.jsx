@@ -305,15 +305,17 @@ export default function Dashboard() {
     loadData()
     const sub = supabase.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, (payload) => {
+        // Spieltag sofort aus Payload setzen
         if (payload.new?.active_spieltag !== undefined) {
           setSpieltag(payload.new.active_spieltag)
           setManualOverride(false)
         }
+        // Rest (players, schedule etc.) via loadData
         loadData()
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
         if (payload.eventType === 'DELETE') {
-          setResults(prev => { const n = { ...prev }; delete n[payload.old.game_id]; return n })
+          loadData()
         } else {
           const r = payload.new
           setResults(prev => ({ ...prev, [r.game_id]: { home: r.home_score, away: r.away_score } }))
