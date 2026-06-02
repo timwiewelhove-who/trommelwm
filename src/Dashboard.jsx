@@ -305,6 +305,7 @@ export default function Dashboard() {
     loadData()
     const sub = supabase.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, async () => {
+        console.log('TOURNAMENT EVENT RECEIVED')
         const { data } = await supabase.from('tournament').select('active_spieltag,live_active').order('created_at', { ascending: false }).limit(1)
         if (data && data.length) {
           setSpieltag(data[0].active_spieltag || 0)
