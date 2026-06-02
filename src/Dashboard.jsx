@@ -297,6 +297,21 @@ export default function Dashboard() {
   const [clock, setClock] = useState('')
 
   useEffect(() => {
+    const poll = setInterval(async () => {
+      const { data } = await supabase.from('tournament').select('active_spieltag,live_active').order('created_at', { ascending: false }).limit(1)
+      if (data?.[0]) {
+        const d = data[0]
+        setTournament(p => {
+          if (!p || (d.active_spieltag === p.activeSpieltag && d.live_active === p.liveActive)) return p
+          setSpieltag(d.active_spieltag || 0)
+          return { ...p, liveActive: d.live_active, activeSpieltag: d.active_spieltag || 0 }
+        })
+      }
+    }, 3000)
+    return () => clearInterval(poll)
+  }, [])
+
+  useEffect(() => {
     const t = setInterval(() => setClock(new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })), 1000)
     return () => clearInterval(t)
   }, [])
