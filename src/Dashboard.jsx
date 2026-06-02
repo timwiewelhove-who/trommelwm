@@ -304,18 +304,15 @@ export default function Dashboard() {
   useEffect(() => {
     loadData()
     const sub = supabase.channel('dashboard-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, (payload) => {
-        // Spieltag sofort aus Payload setzen
-        if (payload.new?.active_spieltag !== undefined) {
-          setSpieltag(payload.new.active_spieltag)
-          setManualOverride(false)
-        }
-        // Rest (players, schedule etc.) via loadData
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, async () => {
+        const { data } = await supabase.from('tournament').select('active_spieltag').order('created_at', { ascending: false }).limit(1)
+        if (data && data.length) { setSpieltag(data[0].active_spieltag || 0); setManualOverride(false) }
         loadData()
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, payload => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'results' }, async payload => {
         if (payload.eventType === 'DELETE') {
-          loadData()
+          const { data } = await supabase.from('results').select('*')
+          if (data) { const m = {}; data.forEach(r => { m[r.game_id] = { home: r.home_score, away: r.away_score } }); setResults(m) }
         } else {
           const r = payload.new
           setResults(prev => ({ ...prev, [r.game_id]: { home: r.home_score, away: r.away_score } }))
