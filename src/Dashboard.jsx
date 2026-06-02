@@ -303,7 +303,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadData()
-    const sub = supabase.channel('dashboard-live')
+    const sub = supabase.channel('dashboard-' + Date.now())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, async () => {
         console.log('TOURNAMENT EVENT RECEIVED')
         const { data } = await supabase.from('tournament').select('active_spieltag,live_active').order('created_at', { ascending: false }).limit(1)
