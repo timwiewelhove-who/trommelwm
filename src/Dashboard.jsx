@@ -309,7 +309,6 @@ export default function Dashboard() {
         const d = data[0]
         setTournament(p => {
           if (!p) return p
-          if (Number(d.active_spieltag) === Number(p.activeSpieltag) && Boolean(d.live_active) === Boolean(p.liveActive)) return p
           setSpieltag(Number(d.active_spieltag) || 0)
           return { ...p, liveActive: Boolean(d.live_active), activeSpieltag: Number(d.active_spieltag) || 0 }
         })
