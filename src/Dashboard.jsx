@@ -157,11 +157,11 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
         </div>
         {h2h && h2h.total > 0 && (
           <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.4)', padding: '2px 16px 10px', letterSpacing: '0.02em' }}>
-            Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+            Direktvergleich: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
           </div>
         )}
         {h2h && h2h.total === 0 && (
-          <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.3)', padding: '2px 16px 10px', letterSpacing: '0.02em', fontStyle: 'italic' }}>
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.3)', padding: '2px 16px 10px', letterSpacing: '0.02em' }}>
             Diese Begegnung gab es noch nie!
           </div>
         )}
@@ -183,11 +183,11 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
       </div>
       {h2h && h2h.total > 0 && (
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em' }}>
-          Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+          Direktvergleich: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
         </div>
       )}
       {h2h && h2h.total === 0 && (
-        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em', fontStyle: 'italic' }}>
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em' }}>
           Diese Begegnung gab es noch nie!
         </div>
       )}
@@ -433,7 +433,6 @@ export default function Dashboard() {
 
         <div className="app-footer">
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss30)', padding: '8px 24px 0', borderTop: '0.5px solid var(--gruen40)', marginBottom: 4 }}>
-          *Bisherige Bilanz basierend auf verfügbaren Daten ab WM 2014
         </div>
           <div className="footer-txt">live.trommelschiessen.de</div>
           <div className="footer-txt">Édition Jubilaire · 2006–2026</div>
