@@ -319,6 +319,23 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
+    const poll = setInterval(async () => {
+      const { data } = await supabase.from('tournament').select('active_spieltag,live_active').order('created_at', { ascending: false }).limit(1)
+      if (data && data.length) {
+        const newST = data[0].active_spieltag || 0
+        const newLive = data[0].live_active
+        setTournament(prev => {
+          if (!prev) return prev
+          if (newST === prev.activeSpieltag && newLive === prev.liveActive) return prev
+          setSpieltag(newST)
+          return { ...prev, liveActive: newLive, activeSpieltag: newST }
+        })
+      }
+    }, 5000)
+    return () => clearInterval(poll)
+  }, [])
+
+  useEffect(() => {
     loadData()
     const sub = supabase.channel('dashboard-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tournament' }, () => loadData())
