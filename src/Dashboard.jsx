@@ -350,8 +350,8 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (!manualOverride && tournament?.activeSpieltag !== undefined) setSpieltag(tournament.activeSpieltag)
-  }, [tournament?.activeSpieltag, manualOverride])
+    if (tournament?.activeSpieltag !== undefined) setSpieltag(tournament.activeSpieltag)
+  }, [tournament?.activeSpieltag])
 
   if (loading) return <div className="empty">Laden…</div>
 
