@@ -160,6 +160,11 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
             Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
           </div>
         )}
+        {h2h && h2h.total === 0 && (
+          <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.3)', padding: '2px 16px 10px', letterSpacing: '0.02em', fontStyle: 'italic' }}>
+            Diese Begegnung gab es noch nie!
+          </div>
+        )}
       </div>
     )
   }
@@ -179,6 +184,11 @@ function MatchRow({ m, players, results, status, torLeaderIdx, tableLeaderIdx, m
       {h2h && h2h.total > 0 && (
         <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em' }}>
           Direktvergleich*: {h2h.total} Matches · {h2h.h2hHome}:{h2h.h2hAway} Siege · {h2h.h2hU} Remis · {h2h.h2hToreHome}:{h2h.h2hToreAway} Tore
+        </div>
+      )}
+      {h2h && h2h.total === 0 && (
+        <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--weiss40)', padding: '0 24px 12px', letterSpacing: '0.02em', fontStyle: 'italic' }}>
+          Diese Begegnung gab es noch nie!
         </div>
       )}
     </div>
