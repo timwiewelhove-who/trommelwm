@@ -298,27 +298,6 @@ export default function Dashboard() {
   const [clock, setClock] = useState('')
 
   useEffect(() => {
-    const SUPA_URL = 'https://pltaiozpoofchprydxuz.supabase.co'
-    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsdGFpb3pwb29mY2hwcnlkeHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMzg0MTksImV4cCI6MjA5MTkxNDQxOX0.nkV0AclS8hziq-HCk1kltp9T59u0tKqmcywLhprJ1HY'
-    let active = true
-    const check = async () => {
-      try {
-        const res = await fetch(SUPA_URL + '/rest/v1/tournament?select=active_spieltag,live_active&order=created_at.desc&limit=1', { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } })
-        const data = await res.json()
-        if (!active || !data?.[0]) return
-        const d = data[0]
-        setTournament(p => {
-          if (!p) return p
-          setSpieltag(Number(d.active_spieltag) || 0)
-          return { ...p, liveActive: Boolean(d.live_active), activeSpieltag: Number(d.active_spieltag) || 0 }
-        })
-      } catch(e) {}
-    }
-    const id = setInterval(check, 3000)
-    return () => { active = false; clearInterval(id) }
-  }, [])
-
-  useEffect(() => {
     const t = setInterval(() => setClock(new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })), 1000)
     return () => clearInterval(t)
   }, [])
