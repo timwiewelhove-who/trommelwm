@@ -514,7 +514,7 @@ export default function Admin() {
           <img src="/trommel.svg" alt="" style={{ height: 44, marginRight: 12 }} />
           <div>
             <div className="logo" style={{ fontSize: 22 }}>TRMMLR</div>
-            <div className="event-name">Admin · 10. Trommelschießen-WM</div>
+            <div className="event-name">Admin · 10. Trommelschiessen-WM</div>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>

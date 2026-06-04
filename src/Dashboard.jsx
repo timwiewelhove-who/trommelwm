@@ -394,7 +394,7 @@ export default function Dashboard() {
             <img src="/trommel.svg" alt="" className="mobile-header-logo" />
             <div className="mobile-header-brand">
               <div className="mobile-header-trmmlr">TRMMLR</div>
-              <div className="mobile-header-sub">10. Trommelschießen-WM</div>
+              <div className="mobile-header-sub">10. Trommelschiessen-WM</div>
               <div className="mobile-header-date">06.06.2026</div>
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function Dashboard() {
             <img src="/trommel.svg" alt="" style={{ height: 52, marginRight: 14 }} />
             <div>
               <div className="logo">TRMMLR</div>
-              <div className="event-name">10. Trommelschießen-WM · 06.06.2026</div>
+              <div className="event-name">10. Trommelschiessen-WM · 06.06.2026</div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
