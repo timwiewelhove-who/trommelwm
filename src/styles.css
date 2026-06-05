@@ -643,7 +643,7 @@ body {
 .kicker-matches {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
 }
 .kicker-match + .kicker-match {
   margin-top: 0;
@@ -657,10 +657,10 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-height: 52px;
-  padding: 10px 16px;
+  min-height: 44px;
+  padding: 7px 16px;
   border: 0.5px solid rgba(255,255,255,.12);
-  border-radius: 8px;
+  border-radius: 6px;
   gap: 10px;
   transition: background .15s, border-color .15s, opacity .2s;
 }
