@@ -21,7 +21,7 @@
 
 body {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   background: var(--gruen);
   color: var(--weiss);
 }
@@ -31,12 +31,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 40px;
+  padding: 12px 32px;
   border-bottom: 0.5px solid var(--gruen40);
 }
 .logo {
   font-family: 'Bayon', sans-serif;
-  font-size: 32px;
+  font-size: 24px;
   color: var(--gold);
   letter-spacing: .05em;
   line-height: 1;
@@ -68,9 +68,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 40px;
+  padding: 8px 32px;
   border-bottom: 0.5px solid var(--gruen40);
-  gap: 16px;
+  gap: 12px;
 }
 .st-side {
   font-size: 15px;
@@ -131,7 +131,7 @@ body {
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--weiss60);
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   font-weight: 600;
 }
 .maschinen-grid { display: grid; gap: 14px; }
@@ -288,7 +288,7 @@ body {
 .page-info { font-size: 11px; color: var(--weiss30); }
 
 /* ── Tabelle ── */
-.tabelle-table { width: 100%; border-collapse: collapse; font-size: 15px; table-layout: fixed; }
+.tabelle-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
 .tabelle-table th {
   color: var(--weiss30);
   font-weight: 600;
@@ -609,8 +609,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 12px;
+  margin-bottom: 10px;
+  gap: 8px;
 }
 .kicker-st-select {
   background: transparent;
@@ -643,7 +643,7 @@ body {
 .kicker-matches {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
 }
 .kicker-match + .kicker-match {
   margin-top: 0;
@@ -657,11 +657,11 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-height: 72px;
-  padding: 16px 20px;
+  min-height: 52px;
+  padding: 10px 16px;
   border: 0.5px solid rgba(255,255,255,.12);
   border-radius: 8px;
-  gap: 14px;
+  gap: 10px;
   transition: background .15s, border-color .15s, opacity .2s;
 }
 .kicker-m-label {
@@ -700,21 +700,21 @@ body {
 
 .kicker-home {
   text-align: right;
-  font-size: clamp(16px, 1.5vw, 26px);
+  font-size: clamp(13px, 1.2vw, 20px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
 }
 .kicker-away {
   text-align: left;
-  font-size: clamp(16px, 1.5vw, 26px);
+  font-size: clamp(13px, 1.2vw, 20px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
 }
 .kicker-score-num {
   font-family: 'Bayon', sans-serif;
-  font-size: 44px;
+  font-size: 32px;
   color: var(--gold);
   min-width: 32px;
   text-align: center;
@@ -761,7 +761,7 @@ body {
   background: rgba(176,137,45,.12);
   border: 0.5px solid rgba(176,137,45,.4);
   border-radius: 10px;
-  padding: 20px 16px;
+  padding: 12px 10px;
   text-align: center;
   margin-bottom: 4px;
   max-width: 280px;
@@ -773,7 +773,7 @@ body {
 }
 .tor-leader-tore {
   font-family: 'Bayon', sans-serif;
-  font-size: 56px;
+  font-size: 40px;
   color: var(--gold);
   line-height: 1;
 }
@@ -834,7 +834,7 @@ body {
 .tabelle-table th:nth-child(9) { width: 32px; }
 
 .tabelle-table td, .tabelle-table th {
-  padding: 7px 4px !important;
+  padding: 4px 4px !important;
   white-space: nowrap;
 }
 
