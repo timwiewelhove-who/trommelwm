@@ -375,6 +375,8 @@ export default function Admin() {
   useEffect(() => {
     const saved = sessionStorage.getItem('trmmlr_admin')
     if (saved === ADMIN_PASSWORD) setAuth(true)
+    document.title = 'Trommelschiessen | Turnierleitung'
+    return () => { document.title = 'Trommelschiessen | Jetzt live!' }
   }, [])
 
   useEffect(() => {
