@@ -68,9 +68,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 32px;
+  padding: 6px 24px;
   border-bottom: 0.5px solid var(--gruen40);
-  gap: 12px;
+  gap: 8px;
 }
 .st-side {
   font-size: 15px;
@@ -643,7 +643,7 @@ body {
 .kicker-matches {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 .kicker-match + .kicker-match {
   margin-top: 0;
@@ -657,11 +657,11 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-height: 44px;
-  padding: 7px 16px;
+  min-height: 32px;
+  padding: 4px 14px 2px;
   border: 0.5px solid rgba(255,255,255,.12);
   border-radius: 6px;
-  gap: 10px;
+  gap: 8px;
   transition: background .15s, border-color .15s, opacity .2s;
 }
 .kicker-m-label {
@@ -700,14 +700,14 @@ body {
 
 .kicker-home {
   text-align: right;
-  font-size: clamp(13px, 1.2vw, 20px);
+  font-size: clamp(12px, 1.1vw, 18px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
 }
 .kicker-away {
   text-align: left;
-  font-size: clamp(13px, 1.2vw, 20px);
+  font-size: clamp(12px, 1.1vw, 18px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
@@ -1128,3 +1128,8 @@ body {
   .admin-match-name { font-size: 14px; }
   .admin-st-bar { flex-wrap: wrap; }
 }
+
+.round-divider { padding: 2px 2px; }
+
+/* ── TV: Direktvergleich kleiner ── */
+.kicker-h2h { font-size: 10px !important; padding: 1px 8px 4px !important; }
