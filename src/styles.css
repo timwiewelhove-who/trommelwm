@@ -700,14 +700,14 @@ body {
 
 .kicker-home {
   text-align: right;
-  font-size: clamp(11px, 1.0vw, 15px);
+  font-size: clamp(10px, 0.9vw, 13px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
 }
 .kicker-away {
   text-align: left;
-  font-size: clamp(11px, 1.0vw, 15px);
+  font-size: clamp(10px, 0.9vw, 13px);
   font-weight: 700;
   color: var(--weiss);
   word-break: break-word;
