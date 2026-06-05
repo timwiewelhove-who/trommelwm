@@ -1136,13 +1136,13 @@ body {
 
 /* ── TV Override: Namen klein halten auch bei breiten Screens ── */
 @media (min-width: 1400px) {
-  .kicker-home, .kicker-away { font-size: 14px !important; }
-  .kicker-score-num { font-size: 28px !important; }
-  .kicker-match { min-height: 32px !important; }
+  .kicker-home, .kicker-away { font-size: 17px !important; }
+  .kicker-score-num { font-size: 32px !important; }
+  .kicker-match { min-height: 36px !important; }
   .kicker-matches { gap: 2px !important; }
 }
 @media (min-width: 1800px) {
-  .kicker-home, .kicker-away { font-size: 14px !important; }
-  .kicker-score-num { font-size: 28px !important; }
-  .kicker-match { min-height: 32px !important; }
+  .kicker-home, .kicker-away { font-size: 17px !important; }
+  .kicker-score-num { font-size: 32px !important; }
+  .kicker-match { min-height: 36px !important; }
 }
