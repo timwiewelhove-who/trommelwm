@@ -220,7 +220,7 @@ async function abschliessen(players, schedule, results, setSaving, setSaveMsg, m
     ort: 'WM 2026',
     datum: '06.06.2026',
     teilnehmer: players.length,
-    torschuetzenkoenig: koenigText || '–',
+    torschuetzenkoenig: koenig ? `${players[koenig.i]} (${koenig.tore} Tore)` : '–',
     tore: koenig?.tore || 0,
     punkte: sieger?.pkt || 0,
     spiele: Object.keys(results).length,
